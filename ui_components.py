@@ -259,13 +259,11 @@ class ApiSettingsTab(ctk.CTkFrame):
         def _run():
             from logic import (test_gemini_connection, test_x_connection,
                               test_threads_connection)
-            from config_manager import _decode
 
-            # 現在のエントリから値を取得（表示用にデコード）
+            # 現在のエントリから値を取得
             api = {}
             for key, widget in self.entries.items():
-                val = widget.get()
-                api[key] = _decode(val) if isinstance(val, str) else val
+                api[key] = widget.get()
 
             results = []
 

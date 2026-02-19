@@ -49,7 +49,7 @@ auto-post/
 
 ```bash
 # リポジトリのクローン
-git clone https://github.com/your-username/auto-post.git
+git clone https://github.com/kuroka-pm/Auto-Post.git
 cd auto-post
 
 # 仮想環境の作成
@@ -65,11 +65,11 @@ python app.py
 
 ## 🔑 必要な API キー
 
-| サービス | 取得先 | 用途 |
-|----------|--------|------|
-| **Gemini API** | [Google AI Studio](https://aistudio.google.com/apikey) | 投稿文 / ペルソナ生成 |
-| **X (Twitter) API** | [Developer Portal](https://developer.x.com/en/portal/dashboard) | X への投稿 |
-| **Threads API**（任意） | [Meta for Developers](https://developers.facebook.com/) | Threads への投稿 |
+| サービス | 取得先 | 用途 | 費用 |
+|----------|--------|------|------|
+| **Gemini API** | [Google AI Studio](https://aistudio.google.com/apikey) | 投稿文 / ペルソナ生成 | 無料枠あり（利用頻度が高い場合はクレカ登録が必要） |
+| **X (Twitter) API** | [Developer Portal](https://developer.x.com/en/portal/dashboard) | X への投稿 | Basic: $5/月〜（Free 枠では投稿が制限される場合あり） |
+| **Threads API**（任意） | [Meta for Developers](https://developers.facebook.com/) | Threads への投稿 | 無料 |
 
 ### X API の設定手順
 

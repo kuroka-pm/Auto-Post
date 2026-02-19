@@ -39,11 +39,13 @@
 #### Gemini API（必須）
 - [Google AI Studio](https://aistudio.google.com/apikey) で API キーを作成
 - モデルは `gemini-2.5-flash`（無料枠）が推奨
+- 利用頻度が高い場合はクレジットカードの登録が必要になる場合があります
 
 #### X (Twitter) API（X に投稿する場合）
 - [Developer Portal](https://developer.x.com/en/portal/dashboard) で取得
 - **Read and Write** 権限が必要
 - API Key / API Secret / Access Token / Access Token Secret の 4 つ
+- 無料枠（Free）では投稿が制限されるため、Basic プラン（$5/月〜）への加入が必要になる場合があります
 
 #### Threads API（Threads に投稿する場合）
 - [Meta for Developers](https://developers.facebook.com/) で取得
