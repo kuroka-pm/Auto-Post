@@ -1,20 +1,24 @@
 """
-build_exe.py — PyInstaller を使って Auto-Post を .exe にパッケージする
+build_exe.py — PyInstaller を使って Auto-Post をパッケージする
 
 使い方:
     python build_exe.py
 
 出力:
-    dist/AutoPost.exe   — 実行ファイル
-    dist/AutoPost.zip   — 配布用 zip
+    Windows: dist/AutoPost.exe + dist/AutoPost.zip
+    macOS:   dist/AutoPost.app + dist/AutoPost-mac.zip
 """
 
 import os
 import shutil
 import subprocess
 import sys
+import platform
 import zipfile
 from pathlib import Path
+
+IS_MAC = platform.system() == "Darwin"
+IS_WIN = platform.system() == "Windows"
 
 # ---------------------------------------------------------------------------
 # 設定
@@ -47,7 +51,7 @@ def _get_ctk_data_path() -> str:
     """customtkinter のインストールパスを取得し、PyInstaller の --add-data 形式で返す。"""
     import customtkinter
     ctk_dir = Path(customtkinter.__file__).resolve().parent
-    # Windows: "src;dst" 形式
+    # Windows: "src;dst" / macOS: "src:dst"
     return f"{ctk_dir}{os.pathsep}customtkinter"
 
 
@@ -103,22 +107,35 @@ def build():
         print("❌ ビルドに失敗しました")
         sys.exit(1)
 
-    exe_path = Path("dist") / f"{APP_NAME}.exe"
-    if not exe_path.exists():
-        print(f"❌ {exe_path} が見つかりません")
-        sys.exit(1)
+    # 5. 成果物を確認
+    if IS_MAC:
+        app_path = Path("dist") / f"{APP_NAME}.app"
+        if not app_path.exists():
+            print(f"❌ {app_path} が見つかりません")
+            sys.exit(1)
+        print(f"\n✅ app ビルド成功: {app_path}")
 
-    print(f"\n✅ exe ビルド成功: {exe_path}")
-    print(f"   サイズ: {exe_path.stat().st_size / 1024 / 1024:.1f} MB")
+        # zip 作成（.app はディレクトリなので shutil で圧縮）
+        zip_path = Path("dist") / f"{APP_NAME}-mac"
+        shutil.make_archive(str(zip_path), "zip", "dist", f"{APP_NAME}.app")
+        zip_path = zip_path.with_suffix(".zip")
+        print(f"📦 zip 作成完了: {zip_path}")
+        print(f"   サイズ: {zip_path.stat().st_size / 1024 / 1024:.1f} MB")
+    else:
+        exe_path = Path("dist") / f"{APP_NAME}.exe"
+        if not exe_path.exists():
+            print(f"❌ {exe_path} が見つかりません")
+            sys.exit(1)
+        print(f"\n✅ exe ビルド成功: {exe_path}")
+        print(f"   サイズ: {exe_path.stat().st_size / 1024 / 1024:.1f} MB")
 
-    # 5. zip 作成
-    zip_path = Path("dist") / f"{APP_NAME}.zip"
-    print(f"\n📦 zip 作成中: {zip_path}")
-    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
-        zf.write(exe_path, f"{APP_NAME}.exe")
-
-    print(f"✅ zip 作成完了: {zip_path}")
-    print(f"   サイズ: {zip_path.stat().st_size / 1024 / 1024:.1f} MB")
+        # zip 作成
+        zip_path = Path("dist") / f"{APP_NAME}.zip"
+        print(f"\n📦 zip 作成中: {zip_path}")
+        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+            zf.write(exe_path, f"{APP_NAME}.exe")
+        print(f"✅ zip 作成完了: {zip_path}")
+        print(f"   サイズ: {zip_path.stat().st_size / 1024 / 1024:.1f} MB")
 
     # 6. クリーンアップ（build ディレクトリと .spec ファイル）
     spec_file = Path(f"{APP_NAME}.spec")
@@ -129,8 +146,9 @@ def build():
         shutil.rmtree(build_dir)
     print("🧹 ビルド一時ファイルをクリーンアップしました")
 
+    zip_name = f"{APP_NAME}-mac.zip" if IS_MAC else f"{APP_NAME}.zip"
     print(f"\n{'=' * 60}")
-    print(f"  ✅ 完了！配布ファイル: dist/{APP_NAME}.zip")
+    print(f"  ✅ 完了！配布ファイル: dist/{zip_name}")
     print(f"{'=' * 60}")
 
 
