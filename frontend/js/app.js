@@ -199,7 +199,7 @@ App.dashboard.loadTrends = async function () {
         container.innerHTML = trends.slice(0, 5).map((t, i) =>
             `<div class="trend-item">
         <span class="trend-rank">#${i + 1}</span>
-        <span class="trend-name">${App.escapeHtml(typeof t === "string" ? t : t.name || t)}</span>
+        <span class="trend-name">${App.escapeHtml(typeof t === "string" ? t : t.title || t)}</span>
       </div>`
         ).join("");
     } catch (e) {
