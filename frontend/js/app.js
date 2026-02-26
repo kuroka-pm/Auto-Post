@@ -43,6 +43,7 @@ App.init = async function () {
 
     // 初期データ読込
     await App.loadConfig();
+    App.settings.load();  // DOM を先に埋めておく（save時の空値上書き防止）
     await App.updateStatus();
     App.navigateTo("dashboard");
 
@@ -1037,6 +1038,23 @@ App.settings.save = async function () {
         });
         App.toast("💾 設定を保存しました");
         App.updateStatus();
+    } catch (e) {
+        App.toast("❌ 保存失敗: " + e.message);
+    }
+};
+
+App.settings.saveSources = async function () {
+    const c = App.config;
+    c.sources = {
+        rss_urls: document.getElementById("set-rss-urls").value.split("\n").map(s => s.trim()).filter(Boolean),
+        blacklist: document.getElementById("set-blacklist").value.split(",").map(s => s.trim()).filter(Boolean),
+    };
+    try {
+        await App.api("/api/config", {
+            method: "POST",
+            body: JSON.stringify(c),
+        });
+        App.toast("💾 ソース設定を保存しました");
     } catch (e) {
         App.toast("❌ 保存失敗: " + e.message);
     }
