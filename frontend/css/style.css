@@ -1841,6 +1841,10 @@ body.light-mode .card {
     margin: 8px 12px;
   }
 
+  .sidebar-nav {
+    padding: 0;
+  }
+
   .nav-item {
     justify-content: center;
     padding: 10px 0;
@@ -1854,8 +1858,11 @@ body.light-mode .card {
 
   .sidebar-link,
   .theme-toggle {
+    display: flex;
     justify-content: center;
     padding: 10px 0 !important;
+    margin: 0 !important;
+    border-radius: 0;
   }
 
   .sidebar-nav-bottom {
