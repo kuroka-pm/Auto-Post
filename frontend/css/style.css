@@ -1456,3 +1456,55 @@ h4 {
   color: var(--text-secondary);
   opacity: 0.7;
 }
+
+/* --- 投稿画像アップロード --- */
+.post-image-upload {
+  margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.post-image-label {
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.post-alt-input {
+  flex: 1;
+  min-width: 180px;
+  font-size: 0.85rem;
+  padding: 6px 10px;
+}
+
+.post-image-preview {
+  width: 100%;
+}
+
+.preview-thumb {
+  position: relative;
+  display: inline-block;
+  margin-top: 8px;
+}
+
+.preview-thumb img {
+  max-width: 200px;
+  max-height: 120px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.preview-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  font-size: 0.75rem;
+  line-height: 24px;
+  text-align: center;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+}

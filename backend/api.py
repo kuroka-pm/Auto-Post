@@ -264,19 +264,46 @@ def generate_post():
 
 @app.route("/api/post", methods=["POST"])
 def execute_post():
-    """X / Threads に投稿する。"""
+    """X / Threads に投稿する。画像付きにも対応。"""
     config = load_config()
     api_keys = config.get("api_keys", {})
-    data = request.get_json() or {}
-    text = data.get("text", "")
-    post_to_x = data.get("post_to_x", True)
-    post_to_threads = data.get("post_to_threads", False)
+
+    # JSON or FormData の両方に対応
+    if request.content_type and "multipart/form-data" in request.content_type:
+        text = request.form.get("text", "")
+        post_to_x = request.form.get("post_to_x", "true") == "true"
+        post_to_threads = request.form.get("post_to_threads", "false") == "true"
+        alt_text = request.form.get("alt_text", "")
+        image_file = request.files.get("image")
+    else:
+        data = request.get_json() or {}
+        text = data.get("text", "")
+        post_to_x = data.get("post_to_x", True)
+        post_to_threads = data.get("post_to_threads", False)
+        alt_text = ""
+        image_file = None
+
+    # 画像を一時ファイルに保存
+    image_path = None
+    if image_file and image_file.filename:
+        import tempfile
+        suffix = Path(image_file.filename).suffix or ".png"
+        tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix, dir=str(_PROJECT_ROOT))
+        image_file.save(tmp)
+        tmp.close()
+        image_path = tmp.name
 
     results = {}
     any_success = False
+
     if post_to_x:
         try:
-            logic.post_to_x(text=text, api_keys=api_keys)
+            logic.post_to_x(
+                text=text,
+                api_keys=api_keys,
+                image_path=image_path,
+                alt_text=alt_text or None,
+            )
             results["x"] = "success"
             any_success = True
             _add_log("success", f"X投稿成功: {text[:30]}...")
@@ -286,6 +313,7 @@ def execute_post():
 
     if post_to_threads:
         try:
+            # Threads は公開URLが必要なため、ローカル画像は送れない → テキストのみ
             logic.post_to_threads(text=text, api_key=api_keys.get("threads_api_key", ""))
             results["threads"] = "success"
             any_success = True
@@ -293,6 +321,13 @@ def execute_post():
         except Exception as e:
             results["threads"] = f"error: {e}"
             _add_log("error", f"Threads投稿失敗: {e}")
+
+    # 一時ファイルを削除
+    if image_path:
+        try:
+            Path(image_path).unlink(missing_ok=True)
+        except Exception:
+            pass
 
     # 投稿成功時に履歴に記録
     if any_success:

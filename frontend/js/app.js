@@ -389,6 +389,12 @@ App.generator.generate = async function () {
             return `
         <div class="post-card">
           <div class="post-text" contenteditable="true" id="post-text-${i}">${App.escapeHtml(p.text)}</div>
+          <div class="post-image-upload">
+            <label class="btn btn-sm btn-outline post-image-label" for="post-image-${i}">🖼️ 画像を追加</label>
+            <input type="file" id="post-image-${i}" accept="image/*" style="display:none" onchange="App.generator.previewImage(${i}, event)">
+            <input type="text" id="post-alt-${i}" class="form-input post-alt-input" placeholder="ALT テキスト（画像の説明）" style="display:none">
+            <div id="post-image-preview-${i}" class="post-image-preview"></div>
+          </div>
           <div class="post-meta">
             <span class="post-char-count ${overClass}">${p.char_count}文字</span>
             <div class="post-actions">
@@ -414,6 +420,33 @@ App.generator.copy = function (index) {
     }
 };
 
+App.generator.previewImage = function (index, event) {
+    var file = event.target.files[0];
+    var preview = document.getElementById("post-image-preview-" + index);
+    var altInput = document.getElementById("post-alt-" + index);
+    if (!file) {
+        preview.innerHTML = "";
+        altInput.style.display = "none";
+        return;
+    }
+    var url = URL.createObjectURL(file);
+    preview.innerHTML = '<div class="preview-thumb">' +
+        '<img src="' + url + '" alt="preview">' +
+        '<button class="btn btn-sm btn-outline preview-remove" onclick="App.generator.removeImage(' + index + ')">✕</button>' +
+        '</div>';
+    altInput.style.display = "block";
+};
+
+App.generator.removeImage = function (index) {
+    var fileInput = document.getElementById("post-image-" + index);
+    var preview = document.getElementById("post-image-preview-" + index);
+    var altInput = document.getElementById("post-alt-" + index);
+    fileInput.value = "";
+    preview.innerHTML = "";
+    altInput.style.display = "none";
+    altInput.value = "";
+};
+
 App.generator.post = async function (index) {
     const el = document.getElementById("post-text-" + index);
     if (!el) return;
@@ -435,14 +468,38 @@ App.generator.post = async function (index) {
     }
 
     try {
-        const result = await App.api("/api/post", {
-            method: "POST",
-            body: JSON.stringify({
-                text: text,
-                post_to_x: postX,
-                post_to_threads: postThreads,
-            }),
-        });
+        // 画像がある場合は FormData で送信
+        var fileInput = document.getElementById("post-image-" + index);
+        var altInput = document.getElementById("post-alt-" + index);
+        var hasImage = fileInput && fileInput.files && fileInput.files.length > 0;
+
+        var result;
+        if (hasImage) {
+            var formData = new FormData();
+            formData.append("text", text);
+            formData.append("post_to_x", postX ? "true" : "false");
+            formData.append("post_to_threads", postThreads ? "true" : "false");
+            formData.append("image", fileInput.files[0]);
+            if (altInput && altInput.value) {
+                formData.append("alt_text", altInput.value);
+            }
+            var resp = await fetch("/api/post", { method: "POST", body: formData });
+            if (!resp.ok) {
+                var errData = await resp.json().catch(function () { return {}; });
+                throw new Error(errData.error || "HTTP " + resp.status);
+            }
+            result = await resp.json();
+        } else {
+            result = await App.api("/api/post", {
+                method: "POST",
+                body: JSON.stringify({
+                    text: text,
+                    post_to_x: postX,
+                    post_to_threads: postThreads,
+                }),
+            });
+        }
+
         const msgs = [];
         let hasSuccess = false;
         if (result.x === "success") { msgs.push("X ✅"); hasSuccess = true; }
