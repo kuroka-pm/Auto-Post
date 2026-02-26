@@ -1654,3 +1654,64 @@ h4 {
 .trend-row:hover .trend-remove {
   opacity: 1;
 }
+
+/* --- RSS ソースリスト（テーブル風） --- */
+.rss-source-list {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.rss-source-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--glass-border);
+  transition: background 0.15s;
+}
+
+.rss-source-row:last-child {
+  border-bottom: none;
+}
+
+.rss-source-row:hover {
+  background: rgba(124, 92, 252, 0.06);
+}
+
+.rss-source-check {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent-purple);
+  cursor: pointer;
+}
+
+.rss-source-keyword {
+  flex-shrink: 0;
+  width: 160px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rss-source-url {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  opacity: 0.7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rss-source-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}

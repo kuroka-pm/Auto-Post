@@ -144,13 +144,17 @@
         <div class="collapsible-content">
           <div class="card">
             <div class="card-body">
-              <div class="form-group">
-                <label>RSS URL（1行に1つ）</label>
-                <textarea id="set-rss-urls" class="form-textarea" rows="4"
-                  placeholder="https://example.com/rss&#10;https://example.com/feed"></textarea>
-              </div>
               <button class="btn btn-outline" onclick="App.settings.suggestKeywords()">🔑 ペルソナからキーワード提案</button>
               <div id="keyword-suggest-list" style="display:none; margin-top: 12px;"></div>
+              <div class="form-group" style="margin-top: 16px;">
+                <label>登録済みソース</label>
+                <div id="rss-source-list" class="rss-source-list"></div>
+              </div>
+              <div class="rss-source-actions">
+                <button class="btn btn-sm btn-outline" onclick="App.settings.deleteSelectedSources()">🗑️ 選択削除</button>
+                <button class="btn btn-sm btn-outline" onclick="App.settings.deleteAllSources()"
+                  style="color:var(--accent-red)">🗑️ 全削除</button>
+              </div>
               <div class="form-group" style="margin-top: 16px;">
                 <label>ブラックリスト（除外ワード、カンマ区切り）</label>
                 <input type="text" id="set-blacklist" class="form-input" placeholder="ワード1, ワード2, ワード3">

@@ -981,7 +981,8 @@ App.settings.load = function () {
     });
 
     // 情報源
-    document.getElementById("set-rss-urls").value = (sources.rss_urls || []).join("\n");
+    // 情報源リストをレンダリング
+    App.settings.renderSourceList();
     document.getElementById("set-blacklist").value = (sources.blacklist || []).join(", ");
 
     // note
@@ -1024,10 +1025,10 @@ App.settings.save = async function () {
     c.prompt_settings.writing_guidelines = document.getElementById("set-writing-guidelines").value;
     c.prompt_settings.ng_expressions = document.getElementById("set-ng-expressions").value;
 
-    c.sources = {
-        rss_urls: document.getElementById("set-rss-urls").value.split("\n").map(s => s.trim()).filter(Boolean),
-        blacklist: document.getElementById("set-blacklist").value.split(",").map(s => s.trim()).filter(Boolean),
-    };
+    c.sources = c.sources || {};
+    c.sources.blacklist = document.getElementById("set-blacklist").value.split(",").map(s => s.trim()).filter(Boolean);
+    // rss_sources から rss_urls を同期
+    c.sources.rss_urls = (c.sources.rss_sources || []).map(s => s.url);
 
     c.note_url = document.getElementById("set-note-url").value;
 
@@ -1045,10 +1046,10 @@ App.settings.save = async function () {
 
 App.settings.saveSources = async function () {
     const c = App.config;
-    c.sources = {
-        rss_urls: document.getElementById("set-rss-urls").value.split("\n").map(s => s.trim()).filter(Boolean),
-        blacklist: document.getElementById("set-blacklist").value.split(",").map(s => s.trim()).filter(Boolean),
-    };
+    c.sources = c.sources || {};
+    c.sources.blacklist = document.getElementById("set-blacklist").value.split(",").map(s => s.trim()).filter(Boolean);
+    // rss_sources から rss_urls を同期（バックエンド互換性）
+    c.sources.rss_urls = (c.sources.rss_sources || []).map(s => s.url);
     try {
         await App.api("/api/config", {
             method: "POST",
@@ -1162,18 +1163,84 @@ App.settings.registerKeywords = async function () {
         const urls = data.urls || [];
         if (urls.length === 0) { App.toast("❌ RSS URL を生成できませんでした"); return; }
 
-        // RSS URLテキストエリアに追加
-        const rssTextarea = document.getElementById("set-rss-urls");
-        const existing = rssTextarea.value.trim();
-        const newUrls = urls.filter(function (url) { return existing.indexOf(url) === -1; });
-        if (newUrls.length > 0) {
-            rssTextarea.value = existing + (existing ? "\n" : "") + newUrls.join("\n");
-        }
-        App.toast('🔑 ' + newUrls.length + '件のRSS URLを登録しました');
+        // rss_sources に追加
+        const c = App.config;
+        c.sources = c.sources || {};
+        c.sources.rss_sources = c.sources.rss_sources || [];
+        var added = 0;
+        keywords.forEach(function (kw, i) {
+            var url = urls[i] || "";
+            if (!url) return;
+            // 重複チェック
+            var exists = c.sources.rss_sources.some(function (s) { return s.url === url; });
+            if (!exists) {
+                c.sources.rss_sources.push({ keyword: kw, url: url });
+                added++;
+            }
+        });
+
+        // 自動保存 & UI更新
+        App.settings.renderSourceList();
+        await App.settings.saveSources();
         container.style.display = "none";
+        App.toast('🔑 ' + added + '件のRSSを登録しました');
+
+        // トレンドを自動更新
+        App.trends.refresh();
     } catch (e) {
         App.toast("❌ " + e.message);
     }
+};
+
+App.settings.renderSourceList = function () {
+    const container = document.getElementById("rss-source-list");
+    if (!container) return;
+    const c = App.config;
+    const sources = (c.sources || {}).rss_sources || [];
+
+    // rss_urls からの移行: rss_sources が空で rss_urls があれば変換
+    if (sources.length === 0 && (c.sources || {}).rss_urls && c.sources.rss_urls.length > 0) {
+        c.sources.rss_sources = c.sources.rss_urls.map(function (url) {
+            return { keyword: "", url: url };
+        });
+        App.settings.renderSourceList();
+        return;
+    }
+
+    if (sources.length === 0) {
+        container.innerHTML = '<div class="empty-state" style="padding:16px;text-align:center;color:var(--text-secondary);font-size:0.85rem;">📡 ソースが登録されていません<br>「🔑 ペルソナからキーワード提案」で追加できます</div>';
+        return;
+    }
+
+    container.innerHTML = sources.map(function (s, i) {
+        var kw = s.keyword || "(手動追加)";
+        var url = s.url || "";
+        return '<div class="rss-source-row">' +
+            '<input type="checkbox" class="rss-source-check" data-index="' + i + '">' +
+            '<span class="rss-source-keyword">' + App.escapeHtml(kw) + '</span>' +
+            '<span class="rss-source-url">' + App.escapeHtml(url) + '</span>' +
+            '</div>';
+    }).join("");
+};
+
+App.settings.deleteSelectedSources = async function () {
+    const checks = document.querySelectorAll(".rss-source-check:checked");
+    if (checks.length === 0) { App.toast("⚠️ 削除するソースを選択してください"); return; }
+    const indices = Array.from(checks).map(function (cb) { return parseInt(cb.dataset.index); }).sort(function (a, b) { return b - a; });
+    const sources = App.config.sources.rss_sources || [];
+    indices.forEach(function (i) { sources.splice(i, 1); });
+    App.settings.renderSourceList();
+    await App.settings.saveSources();
+    App.toast('🗑️ ' + indices.length + '件削除しました');
+};
+
+App.settings.deleteAllSources = async function () {
+    if (!confirm("全てのソースを削除しますか？")) return;
+    App.config.sources = App.config.sources || {};
+    App.config.sources.rss_sources = [];
+    App.settings.renderSourceList();
+    await App.settings.saveSources();
+    App.toast('🗑️ 全ソースを削除しました');
 };
 
 App.settings.testConnections = async function () {
