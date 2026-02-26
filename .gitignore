@@ -1,0 +1,45 @@
+# ===== セキュリティ: APIキー・設定 =====
+config.json
+note_cache.json
+
+# ===== データファイル =====
+backend/post_history.json
+backend/analysis_cache.json
+backend/daily_overview.json
+backend/engagement_data.json
+backend/INBOX/*.csv
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+
+# ===== ビルド成果物 =====
+build/
+dist/
+
+# ===== 環境 =====
+.env
+.venv/
+venv/
+env/
+
+# ===== IDE =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== 一時ファイル =====
+temp/
+*.tmp
+*.bak

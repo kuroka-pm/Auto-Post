@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ AutoPost v2</title>
+  <link rel="icon" href="/icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <!-- サイドバー -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-icon">⚡</span>
+      <span class="brand-text">AutoPost</span>
+      <span class="brand-version">v2</span>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">ダッシュボード</span>
+      </li>
+      <li class="nav-item" data-page="trends">
+        <span class="nav-icon">🔥</span>
+        <span class="nav-label">トレンド分析</span>
+      </li>
+      <li class="nav-item" data-page="generator">
+        <span class="nav-icon">✍️</span>
+        <span class="nav-label">投稿生成</span>
+      </li>
+      <li class="nav-item" data-page="scheduler">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">スケジューラー</span>
+      </li>
+      <li class="nav-item" data-page="analytics">
+        <span class="nav-icon">📈</span>
+        <span class="nav-label">アナリティクス</span>
+      </li>
+    </ul>
+
+    <div class="sidebar-divider"></div>
+
+    <ul class="sidebar-nav sidebar-nav-bottom">
+      <li class="nav-item" data-page="settings">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">設定</span>
+      </li>
+    </ul>
+    <a href="/guide.html" target="_blank" class="sidebar-link">
+      <span class="nav-icon">📖</span>
+      <span class="nav-label">使い方ガイド</span>
+    </a>
+
+    <div class="sidebar-status">
+      <div class="status-item" id="status-x">
+        <span class="status-dot"></span>
+        <span>X API</span>
+      </div>
+      <div class="status-item" id="status-gemini">
+        <span class="status-dot"></span>
+        <span>Gemini</span>
+      </div>
+      <div class="status-item" id="status-threads">
+        <span class="status-dot"></span>
+        <span>Threads</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- メインコンテンツ -->
+  <main class="main-content">
+    <!-- ダッシュボード -->
+    <section class="page" id="page-dashboard">
+      <div class="page-header">
+        <h1>ダッシュボード</h1>
+        <span class="live-badge" id="live-badge">LIVE</span>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon">🚀</div>
+          <div class="kpi-value" id="kpi-today">0</div>
+          <div class="kpi-label">今日の投稿</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">👁</div>
+          <div class="kpi-value" id="kpi-impressions">0</div>
+          <div class="kpi-label">インプレッション</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">❤️</div>
+          <div class="kpi-value" id="kpi-likes">0</div>
+          <div class="kpi-label">いいね合計</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">⏰</div>
+          <div class="kpi-value" id="kpi-next">--:--</div>
+          <div class="kpi-label">次回投稿</div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">🔥</span>
+            <h3>急上昇トレンド</h3>
+          </div>
+          <div class="card-body">
+            <div id="dashboard-trends" class="trend-list">
+              <div class="loading-placeholder">読込中...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">⭐</span>
+            <h3>最近の投稿</h3>
+          </div>
+          <div class="card-body">
+            <div id="dashboard-recent-posts" class="recent-posts">
+              <div class="loading-placeholder">読込中...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- トレンド分析 -->
+    <section class="page hidden" id="page-trends">
+      <div class="page-header">
+        <h1>トレンド分析</h1>
+        <button class="btn btn-primary" onclick="App.trends.refresh()">🔄 更新</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon">●</span>
+          <h3>リアルタイムトレンド</h3>
+        </div>
+        <div class="card-body">
+          <div id="trend-tags" class="tag-grid">
+            <div class="loading-placeholder">トレンドを取得中...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">📈</span>
+            <h3>カテゴリ別バズ率</h3>
+          </div>
+          <div class="card-body">
+            <div id="category-buzz" class="bar-chart-container">
+              <div class="loading-placeholder">分析中...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">⏰</span>
+            <h3>最適投稿時間帯</h3>
+          </div>
+          <div class="card-body">
+            <div id="optimal-times" class="time-grid">
+              <div class="time-slot">
+                <div class="time-value">07:00-08:00</div>
+                <div class="time-label">朝の通勤時間</div>
+              </div>
+              <div class="time-slot">
+                <div class="time-value">12:00-13:00</div>
+                <div class="time-label">昼休み</div>
+              </div>
+              <div class="time-slot">
+                <div class="time-value">21:00-23:00</div>
+                <div class="time-label">就寝前リラックス</div>
+              </div>
+              <div class="time-slot">
+                <div class="time-value">09:00-11:00</div>
+                <div class="time-label">午前中チェック</div>
+              </div>
+              <div class="time-slot">
+                <div class="time-value">17:00-19:00</div>
+                <div class="time-label">帰宅時通勤帯</div>
+              </div>
+              <div class="time-slot">
+                <div class="time-value">15:00-16:00</div>
+                <div class="time-label">午後の休憩</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon">🧠</span>
+          <h3>AIおすすめ</h3>
+        </div>
+        <div class="card-body">
+          <div id="ai-recommendation" class="ai-recommendation">
+            <p>トレンドを取得すると、ペルソナとの相性分析結果が表示されます</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 投稿生成 -->
+    <section class="page hidden" id="page-generator">
+      <div class="page-header">
+        <h1>AI 投稿ジェネレーター</h1>
+      </div>
+
+      <div class="generator-layout">
+        <div class="generator-settings">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-icon">🎯</span>
+              <h3>投稿設定</h3>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>投稿タイプ</label>
+                <select id="gen-post-type" class="form-select">
+                  <option value="A">A: トレンド連動</option>
+                  <option value="B">B: 独立ポスト</option>
+                  <option value="C">C: note告知</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>文体スタイル</label>
+                <select id="gen-style" class="form-select">
+                  <option value="">ランダム</option>
+                </select>
+              </div>
+
+              <div class="form-group" id="gen-trend-group">
+                <label>トレンド指定</label>
+                <select id="gen-trend" class="form-select">
+                  <option value="">自動選択</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>生成数</label>
+                <select id="gen-count" class="form-select">
+                  <option value="1">1件</option>
+                  <option value="2">2件</option>
+                  <option value="3" selected>3件</option>
+                  <option value="5">5件</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="gen-smart">
+                  <span>🧠 スマート分析</span>
+                </label>
+              </div>
+
+              <button class="btn btn-primary btn-block" id="btn-generate" onclick="App.generator.generate()">
+                ⚡ 投稿を生成する
+              </button>
+
+              <div class="form-divider"></div>
+
+              <div class="form-group">
+                <label>投稿先</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="gen-post-x" checked>
+                    <span>𝕏 X</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="gen-post-threads">
+                    <span>🔗 Threads</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="generator-results">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-icon">✨</span>
+              <h3>生成された投稿</h3>
+            </div>
+            <div class="card-body">
+              <div id="generated-posts" class="generated-posts">
+                <div class="empty-state">
+                  <span class="empty-icon">←</span>
+                  <p>左側で設定して生成してください</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- スケジューラー -->
+    <section class="page hidden" id="page-scheduler">
+      <div class="page-header">
+        <h1>スケジューラー</h1>
+        <div class="header-actions">
+          <button class="btn btn-success" id="btn-scheduler-start" onclick="App.scheduler.start()">▶️ 開始</button>
+          <button class="btn btn-danger hidden" id="btn-scheduler-stop" onclick="App.scheduler.stop()">⏹ 停止</button>
+        </div>
+      </div>
+
+      <!-- カード型 (A) -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon">⏰</span>
+          <h3>スケジュール一覧</h3>
+        </div>
+        <div class="card-body">
+          <div id="schedule-cards" class="schedule-cards">
+            <!-- JS で動的生成 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- カレンダー型 (B) -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon">📆</span>
+          <h3>週間ビュー</h3>
+        </div>
+        <div class="card-body">
+          <div id="schedule-calendar" class="schedule-calendar">
+            <!-- JS で動的生成 -->
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- シンプル設定 (C) -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">⚡</span>
+            <h3>クイック設定</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>ゆらぎ（分）</label>
+              <input type="number" id="sched-jitter" class="form-input" value="15" min="0" max="60">
+            </div>
+            <div class="form-group">
+              <label>タイプ比率</label>
+              <div class="ratio-inputs">
+                <div class="ratio-item">
+                  <label>A (トレンド)</label>
+                  <input type="number" id="sched-ratio-a" class="form-input form-input-sm" value="3" min="0" max="10">
+                </div>
+                <div class="ratio-item">
+                  <label>B (独立)</label>
+                  <input type="number" id="sched-ratio-b" class="form-input form-input-sm" value="1" min="0" max="10">
+                </div>
+                <div class="ratio-item">
+                  <label>C (note)</label>
+                  <input type="number" id="sched-ratio-c" class="form-input form-input-sm" value="1" min="0" max="10">
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>投稿先</label>
+              <div class="checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="sched-post-x" checked>
+                  <span>𝕏 X</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" id="sched-post-threads">
+                  <span>🔗 Threads</span>
+                </label>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="App.scheduler.saveSettings()">💾 設定保存</button>
+          </div>
+        </div>
+
+        <!-- 実行ログ -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">📜</span>
+            <h3>実行ログ</h3>
+          </div>
+          <div class="card-body">
+            <div id="execution-logs" class="execution-logs">
+              <div class="log-entry log-info">
+                <span class="log-time">--:--:--</span>
+                <span class="log-message">スケジューラー待機中</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- アナリティクス -->
+    <section class="page hidden" id="page-analytics">
+      <div class="page-header">
+        <h1>アナリティクス</h1>
+        <div class="header-actions">
+          <button class="btn btn-outline" onclick="App.analytics.importCSV()">📥 CSV取込</button>
+          <button class="btn btn-primary" onclick="App.analytics.analyze()">🧠 AI分析</button>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon">📝</div>
+          <div class="kpi-value" id="analytics-total">0</div>
+          <div class="kpi-label">総投稿数</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">❤️</div>
+          <div class="kpi-value" id="analytics-avg-likes">0</div>
+          <div class="kpi-label">平均いいね</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">👁</div>
+          <div class="kpi-value" id="analytics-avg-imp">0</div>
+          <div class="kpi-label">平均インプレ</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">🏆</div>
+          <div class="kpi-value" id="analytics-best">0</div>
+          <div class="kpi-label">ベストいいね</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon">📊</span>
+          <h3>エンゲージメント推移</h3>
+          <div class="chart-period-selector">
+            <button class="btn btn-sm btn-outline active" data-period="7">7日</button>
+            <button class="btn btn-sm btn-outline" data-period="30">30日</button>
+            <button class="btn btn-sm btn-outline" data-period="all">全期間</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="engagement-chart" class="engagement-chart-container"></div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">🏆</span>
+            <h3>スタイル別成績</h3>
+          </div>
+          <div class="card-body">
+            <div id="style-ranking" class="style-ranking">
+              <div class="loading-placeholder">データなし</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">🧠</span>
+            <h3>AI改善アドバイス</h3>
+          </div>
+          <div class="card-body">
+            <div id="ai-advice" class="ai-advice">
+              <p>「🧠 AI分析」ボタンでエンゲージメントデータを分析できます</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 設定 -->
+    <section class="page hidden" id="page-settings">
+      <div class="page-header">
+        <h1>設定</h1>
+        <button class="btn btn-primary" onclick="App.settings.save()">💾 保存</button>
+        <div class="config-actions">
+          <button class="btn btn-outline btn-sm" onclick="App.settings.exportConfig()">📤 エクスポート</button>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('config-import-file').click()">📥
+            インポート</button>
+          <input type="file" id="config-import-file" accept=".json" style="display:none"
+            onchange="App.settings.importConfig(event)">
+          <button class="btn btn-outline btn-sm" onclick="App.settings.resetConfig()" style="color:var(--accent-red)">🔄
+            初期化</button>
+        </div>
+      </div>
+
+      <div class="settings-tabs">
+        <button class="settings-tab active" data-settings-tab="api">🔑 API設定</button>
+        <button class="settings-tab" data-settings-tab="persona">👤 ペルソナ</button>
+        <button class="settings-tab" data-settings-tab="prompt">📝 プロンプト</button>
+        <button class="settings-tab" data-settings-tab="sources">📡 情報源</button>
+        <button class="settings-tab" data-settings-tab="note">📔 note連携</button>
+      </div>
+
+      <!-- API設定 -->
+      <div class="settings-panel active" id="settings-api">
+        <div class="card">
+          <div class="card-body">
+            <h4>Gemini API</h4>
+            <div class="form-group">
+              <label>APIキー</label>
+              <input type="password" id="set-gemini-key" class="form-input" placeholder="Gemini API Key">
+            </div>
+            <div class="form-group">
+              <label>モデル</label>
+              <select id="set-gemini-model" class="form-select">
+                <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+                <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+              </select>
+            </div>
+
+            <div class="form-divider"></div>
+            <h4>X (Twitter) API</h4>
+            <div class="form-group">
+              <label>API Key</label>
+              <input type="password" id="set-x-key" class="form-input" placeholder="API Key">
+            </div>
+            <div class="form-group">
+              <label>API Secret</label>
+              <input type="password" id="set-x-secret" class="form-input" placeholder="API Secret">
+            </div>
+            <div class="form-group">
+              <label>Access Token</label>
+              <input type="password" id="set-x-token" class="form-input" placeholder="Access Token">
+            </div>
+            <div class="form-group">
+              <label>Access Token Secret</label>
+              <input type="password" id="set-x-token-secret" class="form-input" placeholder="Access Token Secret">
+            </div>
+
+            <div class="form-divider"></div>
+            <h4>Threads API</h4>
+            <div class="form-group">
+              <label>アクセストークン</label>
+              <input type="password" id="set-threads-key" class="form-input" placeholder="Threads Access Token">
+            </div>
+            <div id="threads-token-status-api" class="threads-token-status">
+              ⏳ トークン状態を確認中...
+            </div>
+            <div style="display:flex; gap:10px; margin-top:8px; flex-wrap:wrap;">
+              <button class="btn btn-sm btn-outline" onclick="App.settings.refreshThreadsToken()">🔄 トークン更新</button>
+            </div>
+
+            <div class="form-divider"></div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn btn-outline" onclick="App.settings.testConnections()">🔌 接続テスト</button>
+            </div>
+            <div id="api-test-result" class="api-test-result" style="margin-top:12px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ペルソナ -->
+      <div class="settings-panel" id="settings-persona">
+        <div class="card">
+          <div class="card-body">
+            <div class="persona-grid">
+              <div class="form-group">
+                <label>性別</label>
+                <input type="text" id="set-persona-gender" class="form-input" placeholder="例: 男性">
+              </div>
+              <div class="form-group">
+                <label>年齢</label>
+                <input type="text" id="set-persona-age" class="form-input" placeholder="例: 30代前半">
+              </div>
+              <div class="form-group">
+                <label>職業</label>
+                <input type="text" id="set-persona-occupation" class="form-input" placeholder="例: 元制作進行→PM">
+              </div>
+              <div class="form-group">
+                <label>一人称</label>
+                <input type="text" id="set-persona-first-person" class="form-input" placeholder="例: 私">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>経歴・バックグラウンド</label>
+              <textarea id="set-persona-background" class="form-textarea" rows="3" placeholder="経歴を入力..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>趣味・関心</label>
+              <textarea id="set-persona-hobbies" class="form-textarea" rows="2" placeholder="趣味を入力..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>性格</label>
+              <textarea id="set-persona-personality" class="form-textarea" rows="2" placeholder="性格を入力..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>話し方・口調</label>
+              <textarea id="set-persona-speech" class="form-textarea" rows="2" placeholder="口調を入力..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>その他</label>
+              <textarea id="set-persona-other" class="form-textarea" rows="2" placeholder="その他の情報..."></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="App.settings.generatePersona()">🧠 AI でペルソナ生成</button>
+            <div class="form-group" style="margin-top: 16px;">
+              <label>生成されたペルソナテキスト</label>
+              <textarea id="set-persona-generated" class="form-textarea" rows="6"
+                placeholder="AIが自動生成します..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- プロンプト設定 -->
+      <div class="settings-panel" id="settings-prompt">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-group">
+              <label>書き方の指針</label>
+              <textarea id="set-writing-guidelines" class="form-textarea" rows="12"></textarea>
+            </div>
+            <div class="form-group">
+              <label>NG表現</label>
+              <textarea id="set-ng-expressions" class="form-textarea" rows="6"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 情報源 -->
+      <div class="settings-panel" id="settings-sources">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-group">
+              <label>RSS URL（1行に1つ）</label>
+              <textarea id="set-rss-urls" class="form-textarea" rows="6"
+                placeholder="https://example.com/rss&#10;https://example.com/feed"></textarea>
+            </div>
+            <button class="btn btn-outline" onclick="App.settings.suggestKeywords()">🔑 ペルソナからキーワード提案</button>
+            <div id="keyword-suggest-list" style="display:none; margin-top: 12px;"></div>
+            <div class="form-group" style="margin-top: 16px;">
+              <label>ブラックリスト（除外ワード、カンマ区切り）</label>
+              <input type="text" id="set-blacklist" class="form-input" placeholder="ワード1, ワード2, ワード3">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- note連携 -->
+      <div class="settings-panel" id="settings-note">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-group">
+              <label>note マイページ URL</label>
+              <input type="text" id="set-note-url" class="form-input" placeholder="https://note.com/your_username">
+            </div>
+            <button class="btn btn-primary" onclick="App.settings.fetchNoteArticles()">📥 記事を取得</button>
+
+            <div class="form-divider"></div>
+            <h4>登録済み記事</h4>
+            <div id="note-articles-list" class="note-articles">
+              <div class="loading-placeholder">記事を取得してください</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- CSV取込用の隠しinput -->
+  <input type="file" id="csv-file-input" accept=".csv" style="display:none">
+
+  <script src="/js/app.js"></script>
+</body>
+
+</html>

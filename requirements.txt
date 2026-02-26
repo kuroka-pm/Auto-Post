@@ -1,0 +1,9 @@
+# Auto-Post v2 — Dependencies
+flask>=3.0
+pywebview>=5.0
+schedule>=1.2
+google-genai>=1.0
+tweepy>=4.14
+feedparser>=6.0
+beautifulsoup4>=4.12
+requests>=2.31

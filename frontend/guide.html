@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoPost v2 — 使い方ガイド</title>
+    <link rel="icon" href="/icon.ico" type="image/x-icon">
+    <style>
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #111827;
+            --bg-card: #1a1f2e;
+            --text-primary: #e8eaf0;
+            --text-secondary: #9ca3af;
+            --accent-purple: #7c5cfc;
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans JP', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .guide-header {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, #1a1040 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 32px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .guide-header h1 {
+            font-size: 1.6rem;
+            background: linear-gradient(135deg, #7c5cfc, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .guide-header .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 20px;
+            background: var(--accent-purple);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .guide-header .back-btn:hover {
+            opacity: 0.85;
+        }
+
+        .guide-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
+
+        .dev-info {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .dev-info p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .dev-info strong {
+            color: var(--text-primary);
+        }
+
+        .dev-info-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .dev-info-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .dev-link-x {
+            background: #000;
+            color: #fff;
+            border: 1px solid #333;
+        }
+
+        .dev-link-note {
+            background: #41c9b4;
+            color: #fff;
+        }
+
+        .dev-info-links a:hover {
+            opacity: 0.8;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            margin: 40px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-purple);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2:first-of-type {
+            margin-top: 0;
+        }
+
+        h3 {
+            font-size: 1.05rem;
+            margin: 24px 0 10px;
+            color: #a78bfa;
+        }
+
+        p {
+            margin-bottom: 14px;
+            color: var(--text-secondary);
+        }
+
+        ul,
+        ol {
+            margin-bottom: 14px;
+            padding-left: 24px;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+        }
+
+        .step-card h4 {
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .step-card p {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+
+        .warning-box {
+            background: rgba(255, 170, 0, 0.08);
+            border-left: 4px solid #ffaa00;
+            border-radius: 0 10px 10px 0;
+            padding: 16px 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #ffaa00;
+            margin-bottom: 6px;
+        }
+
+        .warning-box p {
+            color: var(--text-secondary);
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+
+        .info-box {
+            background: rgba(124, 92, 252, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            border-radius: 0 10px 10px 0;
+            padding: 16px 20px;
+            margin: 20px 0;
+        }
+
+        .info-box h4 {
+            color: #a78bfa;
+            margin-bottom: 6px;
+        }
+
+        .info-box p {
+            color: var(--text-secondary);
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+
+        kbd {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.85rem;
+            font-family: monospace;
+        }
+
+        .disclaimer-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 24px 28px;
+            margin-top: 30px;
+        }
+
+        .disclaimer-section h3 {
+            color: var(--text-primary);
+            margin-top: 16px;
+        }
+
+        .disclaimer-section h3:first-child {
+            margin-top: 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="guide-header">
+        <h1>📖 AutoPost v2 使い方ガイド</h1>
+        <a href="/" class="back-btn">← アプリに戻る</a>
+    </div>
+
+    <div class="guide-content">
+
+        <div class="dev-info">
+            <p>開発者: <strong>kuroka</strong></p>
+            <div class="dev-info-links">
+                <a href="https://x.com/kuroka_pm" target="_blank" class="dev-link-x">𝕏 @kuroka_pm</a>
+                <a href="https://note.com/kuroka_pm" target="_blank" class="dev-link-note">📝 note</a>
+            </div>
+        </div>
+
+        <h2>🚀 はじめに</h2>
+        <p>
+            AutoPost v2 は、X (Twitter) と Threads への投稿を AI でサポートする自動投稿ツールです。
+            トレンド分析、ペルソナ設定、AI による文章生成、スケジュール投稿などの機能を搭載しています。
+        </p>
+
+        <h2>⚙️ 初期設定</h2>
+
+        <div class="step-card">
+            <h4>Step 1: API キーの設定</h4>
+            <p>
+                サイドバーの「⚙️ 設定」→「🔑 API設定」タブで各サービスの API キーを入力してください。
+            </p>
+            <ul>
+                <li><strong>Gemini API Key</strong> — <a href="https://aistudio.google.com/apikey"
+                        style="color:#a78bfa">Google AI Studio</a> で取得</li>
+                <li><strong>X (Twitter) API</strong> — <a href="https://developer.x.com/" style="color:#a78bfa">X
+                        Developer Portal</a> で取得（API Key, Secret, Access Token, Access Token Secret の4つ）</li>
+                <li><strong>Threads API</strong> — Meta Developer Portal で取得したアクセストークン</li>
+            </ul>
+            <p>設定後、「🔌 接続テスト」ボタンで接続を確認してください。</p>
+        </div>
+
+        <div class="step-card">
+            <h4>Step 2: ペルソナの設定</h4>
+            <p>
+                「👤 ペルソナ」タブで投稿者の人物像を設定します。年齢・職業・趣味・性格などを入力し、
+                「🧠 AI生成」ボタンで詳細なペルソナテキストを自動生成できます。
+            </p>
+        </div>
+
+        <div class="step-card">
+            <h4>Step 3: プロンプトの設定</h4>
+            <p>
+                「📝 プロンプト」タブで書き方の方針やNG表現を設定します。
+                ここで設定したルールが AI の投稿生成時に適用されます。
+            </p>
+        </div>
+
+        <div class="step-card">
+            <h4>Step 4: 情報源の設定</h4>
+            <p>
+                「📡 情報源」タブでトレンド取得用の RSS URL を登録します。
+                「🔑 ペルソナからキーワード提案」ボタンで、ペルソナに合った Google News RSS URL を自動提案・登録できます。
+                不要なトピックはブラックリスト（カンマ区切り）に追加して除外できます。
+            </p>
+        </div>
+
+        <h2>📝 主な機能</h2>
+
+        <h3>ダッシュボード</h3>
+        <p>
+            投稿数、インプレッション、いいね数などの KPI を確認できます。
+            エンゲージメントデータは X アナリティクスの CSV をインポートすることで更新されます。
+        </p>
+
+        <h3>トレンド分析</h3>
+        <p>
+            登録した RSS ソースから最新トレンドを取得し、カテゴリ別バズ率と最適投稿時間帯を表示します。
+            「🧠 AIおすすめ」ではペルソナとの相性が良いトレンドを AI が分析・提案します。
+        </p>
+
+        <h3>投稿生成</h3>
+        <p>
+            トレンドとスタイルを選択し、AI が投稿文を自動生成します。
+            生成された投稿は編集後、X / Threads にワンクリックで投稿できます。
+        </p>
+
+        <h3>スケジューラ</h3>
+        <p>
+            曜日ごとの投稿時間を設定し、自動投稿をスケジュールできます。
+            ランダムジッター機能により、機械的な投稿タイミングを避けます。
+            「▶ 開始」でスケジューラが起動し、設定した時間に自動で投稿を生成・送信します。
+        </p>
+
+        <h3>アナリティクス</h3>
+        <p>
+            X アナリティクスからダウンロードした CSV ファイルをインポートして、
+            エンゲージメントの推移をグラフで視覚的に確認できます。
+            AI 分析機能で投稿の傾向分析や改善アドバイスも取得可能です。
+        </p>
+
+        <h3>note 連携</h3>
+        <p>
+            note.com のマイページ URL を登録すると、公開記事を取得して一覧表示します。
+            取得した記事データはキャッシュされるため、再起動後も表示が維持されます。
+        </p>
+
+        <h2>💡 Tips</h2>
+
+        <div class="info-box">
+            <h4>設定のバックアップ</h4>
+            <p>
+                設定ページの「📤 エクスポート」ボタンで現在の設定を JSON ファイルに保存できます。
+                「📥 インポート」で復元、「🔄 初期化」でデフォルト設定にリセットできます。
+            </p>
+        </div>
+
+        <div class="info-box">
+            <h4>Threads トークンの有効期限</h4>
+            <p>
+                Threads のアクセストークンは 60 日で期限切れになります。
+                API設定タブの「🔄 トークン更新」ボタンで長期トークンに更新してください。
+                有効期限はサイドバーのステータスドットでも確認できます。
+            </p>
+        </div>
+
+        <div class="info-box">
+            <h4>CSV インポート</h4>
+            <p>
+                X アナリティクスから CSV をダウンロードし、プロジェクトフォルダの <kbd>INBOX</kbd> フォルダに配置すると、
+                アナリティクスページの「📥 CSVインポート」で取り込みできます。
+            </p>
+        </div>
+
+        <div class="warning-box">
+            <h4>API キーの安全管理</h4>
+            <p>
+                API キーはローカルの <kbd>config.json</kbd> に保存されます。
+                このファイルを第三者に共有しないでください。
+                Git リポジトリにコミットする場合は <kbd>.gitignore</kbd> に含めてください。
+            </p>
+        </div>
+
+        <h2>⚠️ 免責事項・利用規約</h2>
+
+        <div class="disclaimer-section">
+            <h3>1. 自己責任での利用</h3>
+            <p>
+                本ツールの使用により発生したいかなる損害（アカウント凍結、データ損失、投稿内容に起因するトラブル等）について、
+                開発者は一切の責任を負いません。利用者自身の責任と判断のもとにご使用ください。
+            </p>
+
+            <h3>2. API 利用規約の遵守</h3>
+            <p>
+                本ツールは X (Twitter) API、Threads API、Google Gemini API を利用しています。
+                各サービスの利用規約・ガイドラインを必ず確認し、遵守してください。
+                過度な自動投稿やスパム行為は各プラットフォームの規約違反となる場合があります。
+            </p>
+
+            <h3>3. AI 生成コンテンツについて</h3>
+            <p>
+                AI が生成した投稿内容は必ず投稿前に確認してください。
+                AI が生成した情報の正確性・適切性を保証するものではありません。
+                不適切な表現や誤情報が含まれる可能性があります。
+            </p>
+
+            <h3>4. 投稿頻度の注意</h3>
+            <p>
+                各プラットフォームの API レート制限に注意してください。
+                過剰な API 呼び出しはアカウントの制限や一時停止につながる場合があります。
+            </p>
+
+            <h3>5. 個人情報保護</h3>
+            <p>
+                本ツールは外部サーバーにデータを送信しません（API 呼び出しを除く）。
+                すべてのデータはローカル環境に保存されます。
+            </p>
+
+            <h3>6. 著作権</h3>
+            <p>
+                本ツールは個人利用を想定しています。商用利用する場合は開発者にご連絡ください。
+            </p>
+        </div>
+
+    </div>
+
+    <footer>
+        AutoPost v2 &copy; 2026 kuroka — All rights reserved.
+    </footer>
+
+</body>
+
+</html>
