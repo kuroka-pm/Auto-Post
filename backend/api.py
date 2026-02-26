@@ -35,16 +35,56 @@ _scheduler_thread = None
 _execution_logs: list[dict] = []
 _MAX_LOGS = 200
 
+# ログ出力ディレクトリ
+_LOG_DIR = _PROJECT_ROOT / "logs"
+_LOG_DIR.mkdir(exist_ok=True)
+
+
+def _sanitize_error(error: Exception, api_keys: dict) -> str:
+    """エラーメッセージからAPIキーをマスクして漏洩を防ぐ。"""
+    msg = str(error)
+    for key_field in ("x_api_key", "x_api_secret", "x_access_token",
+                      "x_access_token_secret", "gemini_api_key", "threads_api_key"):
+        val = api_keys.get(key_field, "")
+        if val and val in msg:
+            msg = msg.replace(val, "***")
+    return msg
+
+
+def _threads_error_hint(error: Exception) -> str:
+    """Threads エラーにユーザー向けの解決ヒントを付与する。"""
+    msg = str(error)
+    if "API access blocked" in msg or "OAuthException" in msg:
+        return (
+            f"{msg} | 💡 ヒント: Threads API のアクセスがブロックされています。"
+            "Meta 開発者ダッシュボードでアプリのステータスを確認してください。"
+        )
+    if "expired" in msg.lower() or "token" in msg.lower():
+        return (
+            f"{msg} | 💡 ヒント: アクセストークンの有効期限が切れている可能性があります。"
+            "設定画面でトークンを更新してください。"
+        )
+    return msg
+
 
 def _add_log(level: str, message: str):
-    """実行ログを追加する。"""
+    """実行ログを追加する。ファイルにも出力する。"""
+    ts = datetime.now().strftime("%H:%M:%S")
     _execution_logs.append({
-        "time": datetime.now().strftime("%H:%M:%S"),
+        "time": ts,
         "level": level,
         "message": message,
     })
     if len(_execution_logs) > _MAX_LOGS:
         _execution_logs.pop(0)
+    # ファイルログ
+    try:
+        today = datetime.now().strftime("%Y-%m-%d")
+        log_file = _LOG_DIR / f"{today}.log"
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(f"[{ts}] [{level}] {message}\n")
+    except Exception:
+        pass
 
 
 # ---------------------------------------------------------------------------
@@ -308,8 +348,9 @@ def execute_post():
             any_success = True
             _add_log("success", f"X投稿成功: {text[:30]}...")
         except Exception as e:
-            results["x"] = f"error: {e}"
-            _add_log("error", f"X投稿失敗: {e}")
+            safe_msg = _sanitize_error(e, api_keys)
+            results["x"] = f"error: {safe_msg}"
+            _add_log("error", f"X投稿失敗: {safe_msg}")
 
     if post_to_threads:
         try:
@@ -319,8 +360,10 @@ def execute_post():
             any_success = True
             _add_log("success", f"Threads投稿成功")
         except Exception as e:
-            results["threads"] = f"error: {e}"
-            _add_log("error", f"Threads投稿失敗: {e}")
+            safe_msg = _threads_error_hint(e)
+            safe_msg = _sanitize_error(RuntimeError(safe_msg), api_keys)
+            results["threads"] = f"error: {safe_msg}"
+            _add_log("error", f"Threads投稿失敗: {safe_msg}")
 
     # 一時ファイルを削除
     if image_path:
@@ -484,7 +527,9 @@ def _scheduled_post(jitter: int = 0, active_days: list = None):
             )
 
     except Exception as e:
-        _add_log("error", f"投稿失敗: {e}")
+        api_keys = config.get("api_keys", {})
+        safe_msg = _sanitize_error(e, api_keys)
+        _add_log("error", f"投稿失敗: {safe_msg}")
         traceback.print_exc()
 
 

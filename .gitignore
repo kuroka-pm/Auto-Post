@@ -8,6 +8,7 @@ backend/analysis_cache.json
 backend/daily_overview.json
 backend/engagement_data.json
 backend/INBOX/*.csv
+logs/
 
 # ===== Python =====
 __pycache__/
