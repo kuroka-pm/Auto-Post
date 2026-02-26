@@ -45,7 +45,7 @@ App.init = async function () {
     await App.loadConfig();
     App.settings.load();  // DOM を先に埋めておく（save時の空値上書き防止）
     await App.updateStatus();
-    App.navigateTo("dashboard");
+    App.navigateTo(localStorage.getItem("autopost_lastPage") || "dashboard");
 
     // 定期更新
     setInterval(() => App.updateStatus(), 15000);
@@ -54,6 +54,7 @@ App.init = async function () {
 
 App.navigateTo = function (page) {
     App.currentPage = page;
+    localStorage.setItem("autopost_lastPage", page);
 
     // ページ切替
     document.querySelectorAll(".page").forEach((p) => p.classList.add("hidden"));
