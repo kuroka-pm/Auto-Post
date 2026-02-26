@@ -1754,7 +1754,7 @@ h4 {
   border: none;
   cursor: pointer;
   width: 100%;
-  text-align: left;
+  text-align: center;
 }
 
 /* --- ライトモード --- */
@@ -1925,6 +1925,11 @@ body.light-mode .card {
   /* ログ */
   .log-entry {
     font-size: 0.78rem;
+  }
+
+  /* AIジェネレーター: 縦並び */
+  .generator-layout {
+    grid-template-columns: 1fr;
   }
 }
 
