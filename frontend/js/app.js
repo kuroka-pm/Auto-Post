@@ -227,7 +227,6 @@ App.trends.refresh = async function () {
         const data = await App.api("/api/trends");
         App.trends._data = data.trends || [];
         App.trends.renderTags();
-        App.trends.renderBuzzRates();
 
         // AIおすすめ分析
         if (App.trends._data.length > 0) {
@@ -274,32 +273,28 @@ App.trends.renderTags = function () {
         container.innerHTML = '<div class="loading-placeholder">トレンドなし</div>';
         return;
     }
-    container.innerHTML = trends.map((t, i) => {
-        const name = typeof t === "string" ? t : t.name || t;
-        const hot = i < 3 ? "hot" : "";
-        return `<span class="tag ${hot}" onclick="App.trends.selectForGenerate('${App.escapeHtml(name)}')">${App.escapeHtml(name)}</span>`;
-    }).join("");
+    container.innerHTML = '<div class="trend-list-items">' + trends.map((t, i) => {
+        const title = t.title || t;
+        const sourceUrl = t.source_url || "";
+        const sourceName = t.source_name || "";
+        const hot = i < 3 ? " hot" : "";
+        return `<div class="trend-row${hot}">
+            <span class="trend-rank">${i + 1}</span>
+            <div class="trend-info">
+                <span class="trend-title" onclick="App.trends.selectForGenerate('${App.escapeHtml(title).replace(/'/g, "\\'")}')">${App.escapeHtml(title)}</span>
+                ${sourceUrl ? `<a class="trend-source" href="${App.escapeHtml(sourceUrl)}" target="_blank">${App.escapeHtml(sourceName || sourceUrl)}</a>` : ""}
+            </div>
+            <button class="btn btn-sm trend-remove" onclick="App.trends.removeTrend(${i})" title="削除">✕</button>
+        </div>`;
+    }).join("") + '</div>';
 
     // 投稿生成のトレンドセレクトも更新
     App.generator.updateTrendOptions(trends);
 };
 
-App.trends.renderBuzzRates = function () {
-    const container = document.getElementById("category-buzz");
-    const categories = [
-        { name: "AI・テック", rate: 94, color: "purple" },
-        { name: "副業・稼ぐ", rate: 91, color: "warm" },
-        { name: "投資・資産", rate: 86, color: "blue" },
-        { name: "自己啓発", rate: 78, color: "purple" },
-        { name: "節約・生活", rate: 72, color: "blue" },
-    ];
-    container.innerHTML = categories.map((c) =>
-        `<div class="bar-row">
-      <span class="bar-label">${c.name}</span>
-      <div class="bar-track"><div class="bar-fill ${c.color}" style="width:${c.rate}%"></div></div>
-      <span class="bar-value">${c.rate}%</span>
-    </div>`
-    ).join("");
+App.trends.removeTrend = function (index) {
+    App.trends._data.splice(index, 1);
+    App.trends.renderTags();
 };
 
 App.trends.selectForGenerate = function (trend) {
@@ -340,7 +335,7 @@ App.generator.updateTrendOptions = function (trends) {
     const current = select.value;
     select.innerHTML = '<option value="">自動選択</option>';
     trends.forEach((t) => {
-        const name = typeof t === "string" ? t : t.name || t;
+        const name = typeof t === "string" ? t : t.title || t;
         const opt = document.createElement("option");
         opt.value = name;
         opt.textContent = name;

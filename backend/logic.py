@@ -269,12 +269,13 @@ def keywords_to_rss_urls(keywords: list[str]) -> list[str]:
 # トレンド取得
 # ---------------------------------------------------------------------------
 
-def fetch_trends(rss_urls: list[str], blacklist: list[str]) -> list[str]:
+def fetch_trends(rss_urls: list[str], blacklist: list[str]) -> list[dict]:
     """RSS URL リストからトレンドワードを取得する。
 
     - 複数ソースを統合し、重複を除去
     - ブラックリストに含まれる語を除外
     - 新しい順にソートし、最大15件を返す
+    - 各トレンドにソースURL・ソース名を付与
     """
     # --- 前処理: URL 正規化 & オートディスカバリ ---
     resolved_urls: list[str] = []
@@ -293,17 +294,19 @@ def fetch_trends(rss_urls: list[str], blacklist: list[str]) -> list[str]:
                 # 発見できなかった場合はそのまま渡す（feedparser に任せる）
                 resolved_urls.append(normalized)
 
-    collected: list[tuple[str, float | None]] = []
+    collected: list[tuple[str, float | None, str, str]] = []  # (title, ts, link, feed_title)
     for url in resolved_urls:
         if _is_private_url(url):
             print(f"[WARN] プライベートURL をブロックしました: {url}")
             continue
         try:
             feed = feedparser.parse(url)
+            feed_title = feed.feed.get("title", url) if hasattr(feed, "feed") else url
             for entry in feed.entries:
                 title = entry.get("title", "").strip()
                 if not title:
                     continue
+                link = entry.get("link", "")
                 pub = entry.get("published_parsed") or entry.get("updated_parsed")
                 ts = None
                 if pub:
@@ -311,7 +314,7 @@ def fetch_trends(rss_urls: list[str], blacklist: list[str]) -> list[str]:
                         ts = time.mktime(pub)
                     except Exception:
                         ts = None
-                collected.append((title, ts))
+                collected.append((title, ts, link, feed_title))
         except Exception as e:
             # 1つのソースが失敗しても他を続行
             print(f"[WARN] RSS取得失敗 ({url}): {e}")
@@ -319,15 +322,19 @@ def fetch_trends(rss_urls: list[str], blacklist: list[str]) -> list[str]:
     # 重複除去（新しい順）
     collected.sort(key=lambda x: x[1] or 0, reverse=True)
     seen: set[str] = set()
-    trends: list[str] = []
-    for title, _ in collected:
+    trends: list[dict] = []
+    for title, _, link, feed_title in collected:
         key = title.lower()
         if key in seen:
             continue
         if any(term in title for term in blacklist):
             continue
         seen.add(key)
-        trends.append(title)
+        trends.append({
+            "title": title,
+            "source_url": link,
+            "source_name": feed_title,
+        })
 
     if len(trends) > 15:
         trends = trends[:15]
