@@ -259,20 +259,6 @@ App.dashboard.loadTrends = async function () {
     }
 };
 
-App.trends.loadOptimalTimes = async function () {
-    try {
-        var data = await App.api("/api/optimal-times");
-        if (!data.times || data.times.length === 0) return;
-        var container = document.getElementById("optimal-times");
-        if (!container) return;
-        container.innerHTML = data.times.map(function (t) {
-            return '<div class="time-slot">' +
-                '<div class="time-value">' + App.escapeHtml(t.time) + '</div>' +
-                '<div class="time-label">' + App.escapeHtml(t.label) + '</div>' +
-                '</div>';
-        }).join("");
-    } catch (e) { /* 静的データのまま */ }
-};
 
 // ==========================================================================
 // トレンド分析
@@ -286,6 +272,21 @@ App.trends.load = async function () {
         await App.trends.refresh();
     }
     App.trends.loadOptimalTimes();
+};
+
+App.trends.loadOptimalTimes = async function () {
+    try {
+        var data = await App.api("/api/optimal-times");
+        if (!data.times || data.times.length === 0) return;
+        var container = document.getElementById("optimal-times");
+        if (!container) return;
+        container.innerHTML = data.times.map(function (t) {
+            return '<div class="time-slot">' +
+                '<div class="time-value">' + App.escapeHtml(t.time) + '</div>' +
+                '<div class="time-label">' + App.escapeHtml(t.label) + '</div>' +
+                '</div>';
+        }).join("");
+    } catch (e) { /* 静的データのまま */ }
 };
 
 App.trends.refresh = async function () {
