@@ -16,6 +16,7 @@ from flask import Flask, jsonify, request
 from backend.config_manager import load_config, save_config, get_default_config
 from backend import logic
 from backend import engagement
+import random
 
 # プロジェクトルート = backend/ の親
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -174,15 +175,25 @@ def _mask_api_keys(config: dict) -> dict:
 # トレンド API
 # ---------------------------------------------------------------------------
 
+# --- RSS キャッシュ ---
+_trends_cache: dict = {"data": [], "ts": 0}
+_TRENDS_CACHE_TTL = 300   # 5 分
+
 @app.route("/api/trends", methods=["GET"])
 def get_trends():
-    """トレンドを取得する。"""
+    """トレンドを取得する（5分キャッシュ付き）。"""
+    force = request.args.get("force", "false") == "true"
+    now = time.time()
+    if not force and _trends_cache["data"] and (now - _trends_cache["ts"]) < _TRENDS_CACHE_TTL:
+        return jsonify({"trends": _trends_cache["data"], "cached": True})
     config = load_config()
     sources = config.get("sources", {})
     rss_urls = sources.get("rss_urls", [])
     blacklist = sources.get("blacklist", [])
     try:
         trends = logic.fetch_trends(rss_urls=rss_urls, blacklist=blacklist)
+        _trends_cache["data"] = trends
+        _trends_cache["ts"] = now
         return jsonify({"trends": trends})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -291,6 +302,7 @@ def generate_post():
                     smart_analysis=use_smart,
                     feedback=feedback,
                 )
+            post = logic.sanitize_post(post)
             results.append({"text": post, "char_count": len(post)})
         except Exception as e:
             results.append({"error": str(e)})
@@ -338,7 +350,8 @@ def execute_post():
 
     if post_to_x:
         try:
-            logic.post_to_x(
+            logic._retry_api_call(
+                logic.post_to_x,
                 text=text,
                 api_keys=api_keys,
                 image_path=image_path,
@@ -355,7 +368,9 @@ def execute_post():
     if post_to_threads:
         try:
             # Threads は公開URLが必要なため、ローカル画像は送れない → テキストのみ
-            logic.post_to_threads(text=text, api_key=api_keys.get("threads_api_key", ""))
+            logic._retry_api_call(
+                logic.post_to_threads, text=text, api_key=api_keys.get("threads_api_key", "")
+            )
             results["threads"] = "success"
             any_success = True
             _add_log("success", f"Threads投稿成功")
@@ -475,8 +490,14 @@ def _scheduled_post(jitter: int = 0, active_days: list = None):
             if not articles:
                 _add_log("skip", "note記事未登録 → スキップ")
                 return
+            # 重複防止: 直近3日間に投稿した記事を除外
+            recent_urls = engagement.get_recent_note_urls(days=3)
+            available = [a for a in articles if a.get("url", "") not in recent_urls]
+            if not available:
+                _add_log("skip", "全note記事が直近投稿済み → スキップ")
+                return
             import random as _rnd
-            article = _rnd.choice(articles)
+            article = _rnd.choice(available)
             promotion_styles = config.get("note_promotion", {}).get("promotion_styles", [])
             promo_style = logic.select_note_promotion_style(promotion_styles)
             api_keys = config.get("api_keys", {})
@@ -504,18 +525,21 @@ def _scheduled_post(jitter: int = 0, active_days: list = None):
                 model=api_keys.get("gemini_model", "gemini-2.5-flash"),
             )
 
+        text = logic.sanitize_post(text)
         _add_log("success", f"生成完了: {text[:40]}...")
 
         schedule_conf = config.get("schedule", {})
         api_keys = config.get("api_keys", {})
         platforms = []
         if schedule_conf.get("post_to_x", True):
-            logic.post_to_x(text=text, api_keys=api_keys)
+            logic._retry_api_call(logic.post_to_x, text=text, api_keys=api_keys)
             _add_log("success", "X投稿成功")
             platforms.append("x")
 
         if schedule_conf.get("post_to_threads", False):
-            logic.post_to_threads(text=text, api_key=api_keys.get("threads_api_key", ""))
+            logic._retry_api_call(
+                logic.post_to_threads, text=text, api_key=api_keys.get("threads_api_key", "")
+            )
             _add_log("success", "Threads投稿成功")
             platforms.append("threads")
 
@@ -531,6 +555,97 @@ def _scheduled_post(jitter: int = 0, active_days: list = None):
         safe_msg = _sanitize_error(e, api_keys)
         _add_log("error", f"投稿失敗: {safe_msg}")
         traceback.print_exc()
+
+
+# ---------------------------------------------------------------------------
+# 最適投稿時間 API（動的分析）
+# ---------------------------------------------------------------------------
+
+@app.route("/api/optimal-times", methods=["GET"])
+def get_optimal_times():
+    """エンゲージメントデータからピーク時間帯を算出する。"""
+    try:
+        history = engagement.get_post_history()
+        if len(history) < 5:
+            return jsonify({"times": [], "message": "データ不足（5件以上必要）"})
+
+        hourly = {}  # hour -> list of engagement values
+        for entry in history:
+            ts = entry.get("timestamp", "")
+            if not ts or len(ts) < 13:
+                continue
+            try:
+                hour = int(ts[11:13])
+            except (ValueError, IndexError):
+                continue
+            eng = (entry.get("likes", 0) or 0) + (entry.get("impressions", 0) or 0) * 0.01
+            if hour not in hourly:
+                hourly[hour] = []
+            hourly[hour].append(eng)
+
+        if not hourly:
+            return jsonify({"times": [], "message": "時刻付きデータなし"})
+
+        avg_eng = {h: sum(v) / len(v) for h, v in hourly.items()}
+        top_hours = sorted(avg_eng, key=avg_eng.get, reverse=True)[:5]
+        top_hours.sort()
+
+        labels = {
+            range(5, 9): "朝の活動時間",
+            range(9, 12): "午前中",
+            range(12, 14): "昼休み",
+            range(14, 17): "午後",
+            range(17, 20): "帰宅時間帯",
+            range(20, 22): "ゴールデンタイム",
+            range(22, 25): "就寝前",
+        }
+
+        times = []
+        for h in top_hours:
+            label = "その他"
+            for rng, l in labels.items():
+                if h in rng:
+                    label = l
+                    break
+            times.append({"time": f"{h:02d}:00-{h+1:02d}:00", "label": label, "score": round(avg_eng[h], 1)})
+
+        return jsonify({"times": times})
+    except Exception as e:
+        return jsonify({"times": [], "error": str(e)})
+
+
+# ---------------------------------------------------------------------------
+# スケジューラ プレビュー API
+# ---------------------------------------------------------------------------
+
+@app.route("/api/scheduler/preview", methods=["POST"])
+def scheduler_preview():
+    """次回スケジュール投稿のプレビューを生成する。"""
+    config = load_config()
+    api_keys = config.get("api_keys", {})
+    try:
+        post_type = logic.select_post_type(config.get("post_type", {}))
+        if post_type == "C":
+            articles = config.get("note_promotion", {}).get("articles", [])
+            if not articles:
+                return jsonify({"preview": "(note記事未登録)", "type": "C"})
+            article = articles[0]
+            return jsonify({"preview": f"[note宣伝] {article.get('title', '記事')}", "type": "C"})
+        else:
+            writing_styles = config.get("prompt_settings", {}).get("writing_styles", [])
+            style = logic.select_style_for_type(post_type, writing_styles, config.get("post_type", {}))
+            rss_urls = config.get("sources", {}).get("rss_urls", [])
+            blacklist = config.get("sources", {}).get("blacklist", [])
+            trends = logic.fetch_trends(rss_urls=rss_urls, blacklist=blacklist) if post_type == "A" else []
+            trend_summary = trends[0].get("title", "") if trends else "(トレンドなし)"
+            return jsonify({
+                "preview": f"[{post_type}] スタイル: {style.get('name', '?')} / トレンド: {trend_summary}",
+                "type": post_type,
+                "style": style.get("name", ""),
+                "trend": trend_summary,
+            })
+    except Exception as e:
+        return jsonify({"preview": f"プレビュー生成失敗: {e}", "error": str(e)})
 
 
 # ---------------------------------------------------------------------------

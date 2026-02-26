@@ -53,6 +53,10 @@
       <span class="nav-icon">📖</span>
       <span class="nav-label">使い方ガイド</span>
     </a>
+    <button class="sidebar-link theme-toggle" onclick="App.toggleLightMode()">
+      <span class="nav-icon">🌓</span>
+      <span class="nav-label">テーマ切替</span>
+    </button>
 
     <div class="sidebar-status">
       <div class="status-item" id="status-x">
@@ -137,7 +141,8 @@
       </div>
 
       <div class="collapsible-panel">
-        <button class="collapsible-toggle" onclick="this.parentElement.classList.toggle('open')">
+        <button class="collapsible-toggle"
+          onclick="this.parentElement.classList.toggle('open'); App._saveCollapsible(this.parentElement)">
           📡 ソース設定
           <span class="collapsible-arrow">▶</span>
         </button>
@@ -167,7 +172,8 @@
       </div>
 
       <div class="collapsible-panel" id="trends-collapsible">
-        <button class="collapsible-toggle" onclick="this.parentElement.classList.toggle('open')">
+        <button class="collapsible-toggle"
+          onclick="this.parentElement.classList.toggle('open'); App._saveCollapsible(this.parentElement)">
           ● リアルタイムトレンド
           <span class="collapsible-arrow">▶</span>
         </button>

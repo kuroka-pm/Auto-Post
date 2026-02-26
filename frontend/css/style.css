@@ -1747,3 +1747,84 @@ h4 {
   font-size: 0.78rem;
   color: var(--text-secondary);
 }
+
+/* --- テーマ切替ボタン --- */
+.theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+/* --- ライトモード --- */
+body.light-mode {
+  --bg-body: #f0f2f5;
+  --bg-sidebar: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f5f5ff;
+  --bg-input: #f0f0f5;
+  --bg-input-focus: #e8e8f0;
+  --border-color: rgba(0, 0, 0, 0.08);
+  --border-glow: rgba(124, 92, 252, 0.15);
+  --text-primary: #1a1a2e;
+  --text-secondary: #555;
+  --text-muted: #888;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.06);
+}
+
+body.light-mode .sidebar {
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .card {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* --- レスポンシブ --- */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 60px;
+    padding: 12px 0;
+  }
+
+  .sidebar .nav-label,
+  .sidebar .brand-text,
+  .sidebar .brand-version,
+  .sidebar .status-label,
+  .sidebar-link .nav-label {
+    display: none;
+  }
+
+  .sidebar-brand {
+    justify-content: center;
+  }
+
+  .nav-item,
+  .sidebar-link {
+    justify-content: center;
+    padding: 10px 0;
+  }
+
+  .main-content {
+    margin-left: 60px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .time-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .page-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .settings-tabs {
+    flex-wrap: wrap;
+  }
+}

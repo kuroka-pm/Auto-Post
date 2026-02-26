@@ -50,6 +50,22 @@ App.init = async function () {
     // 定期更新
     setInterval(() => App.updateStatus(), 15000);
     setInterval(() => App.scheduler.refreshLogs(), 10000);
+
+    // キーボードショートカット
+    document.addEventListener("keydown", function (e) {
+        // Ctrl+G = 生成
+        if (e.ctrlKey && e.key === "g") { e.preventDefault(); App.navigateTo("generator"); App.generator.generate(); }
+        // Ctrl+Enter = 投稿
+        if (e.ctrlKey && e.key === "Enter") { e.preventDefault(); App.generator.postAll(); }
+    });
+
+    // ライトモード復元
+    if (localStorage.getItem("autopost_lightMode") === "true") {
+        document.body.classList.add("light-mode");
+    }
+
+    // 折りたたみ状態復元
+    App._restoreCollapsibles();
 };
 
 App.navigateTo = function (page) {
@@ -122,6 +138,41 @@ App.toast = function (message, duration = 3000) {
     el.textContent = message;
     document.body.appendChild(el);
     setTimeout(() => el.remove(), duration);
+};
+
+App.playSuccessSound = function () {
+    try {
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = 880;
+        gain.gain.value = 0.15;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+        osc.stop(ctx.currentTime + 0.3);
+    } catch (e) { /* silent */ }
+};
+
+App.toggleLightMode = function () {
+    document.body.classList.toggle("light-mode");
+    var isLight = document.body.classList.contains("light-mode");
+    localStorage.setItem("autopost_lightMode", isLight);
+};
+
+App._restoreCollapsibles = function () {
+    document.querySelectorAll(".collapsible-panel[id]").forEach(function (panel) {
+        var state = localStorage.getItem("autopost_collapse_" + panel.id);
+        if (state === "open") panel.classList.add("open");
+    });
+};
+
+App._saveCollapsible = function (panel) {
+    if (panel.id) {
+        localStorage.setItem("autopost_collapse_" + panel.id, panel.classList.contains("open") ? "open" : "closed");
+    }
 };
 
 App.api = async function (url, options = {}) {
@@ -208,6 +259,21 @@ App.dashboard.loadTrends = async function () {
     }
 };
 
+App.trends.loadOptimalTimes = async function () {
+    try {
+        var data = await App.api("/api/optimal-times");
+        if (!data.times || data.times.length === 0) return;
+        var container = document.getElementById("optimal-times");
+        if (!container) return;
+        container.innerHTML = data.times.map(function (t) {
+            return '<div class="time-slot">' +
+                '<div class="time-value">' + App.escapeHtml(t.time) + '</div>' +
+                '<div class="time-label">' + App.escapeHtml(t.label) + '</div>' +
+                '</div>';
+        }).join("");
+    } catch (e) { /* 静的データのまま */ }
+};
+
 // ==========================================================================
 // トレンド分析
 // ==========================================================================
@@ -219,6 +285,7 @@ App.trends.load = async function () {
     if (App.trends._data.length === 0) {
         await App.trends.refresh();
     }
+    App.trends.loadOptimalTimes();
 };
 
 App.trends.refresh = async function () {
@@ -226,7 +293,7 @@ App.trends.refresh = async function () {
     container.innerHTML = '<div class="loading-placeholder">トレンドを取得中...</div>';
 
     try {
-        const data = await App.api("/api/trends");
+        const data = await App.api("/api/trends?force=true");
         App.trends._data = data.trends || [];
         App.trends.renderTags();
         // トレンド更新時に折りたたみを自動展開
@@ -507,6 +574,7 @@ App.generator.post = async function (index) {
         if (result.x && result.x.startsWith("error")) msgs.push("X ❌");
         if (result.threads && result.threads.startsWith("error")) msgs.push("Threads ❌");
         App.toast(msgs.join("  "));
+        if (hasSuccess) App.playSuccessSound();
 
         if (btn) {
             if (hasSuccess) {
@@ -1068,14 +1136,24 @@ App.settings.saveSources = async function () {
 // --- 設定エクスポート / インポート / 初期化 ---
 
 App.settings.exportConfig = function () {
-    var json = JSON.stringify(App.config, null, 2);
+    // API キーをマスクしてエクスポート
+    var exportData = JSON.parse(JSON.stringify(App.config));
+    if (exportData.api_keys) {
+        Object.keys(exportData.api_keys).forEach(function (k) {
+            if (k !== "gemini_model" && exportData.api_keys[k]) {
+                var v = exportData.api_keys[k];
+                exportData.api_keys[k] = v.length > 8 ? v.slice(0, 4) + "***" + v.slice(-4) : "***";
+            }
+        });
+    }
+    var json = JSON.stringify(exportData, null, 2);
     var blob = new Blob([json], { type: "application/json" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "autopost_config_" + new Date().toISOString().slice(0, 10) + ".json";
     a.click();
     URL.revokeObjectURL(a.href);
-    App.toast("📤 設定をエクスポートしました");
+    App.toast("📤 設定をエクスポートしました（APIキーはマスク済み）");
 };
 
 App.settings.importConfig = async function (event) {
