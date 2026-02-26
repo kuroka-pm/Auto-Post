@@ -1720,3 +1720,30 @@ h4 {
   gap: 8px;
   margin-top: 8px;
 }
+
+/* --- 最適投稿時間帯グリッド --- */
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.time-slot {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 16px 12px;
+  text-align: center;
+}
+
+.time-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.time-label {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}

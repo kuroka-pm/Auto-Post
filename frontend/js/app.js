@@ -229,6 +229,9 @@ App.trends.refresh = async function () {
         const data = await App.api("/api/trends");
         App.trends._data = data.trends || [];
         App.trends.renderTags();
+        // トレンド更新時に折りたたみを自動展開
+        var panel = document.getElementById("trends-collapsible");
+        if (panel) panel.classList.add("open");
 
         // AIおすすめ分析
         if (App.trends._data.length > 0) {
