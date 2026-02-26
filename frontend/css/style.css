@@ -1508,3 +1508,57 @@ h4 {
   border-radius: 50%;
   background: var(--bg-secondary);
 }
+
+/* --- 折りたたみパネル --- */
+.collapsible-panel {
+  margin-bottom: 20px;
+}
+
+.collapsible-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.collapsible-toggle:hover {
+  background: rgba(124, 92, 252, 0.08);
+  color: var(--text-primary);
+}
+
+.collapsible-arrow {
+  font-size: 0.7rem;
+  transition: transform 0.3s;
+}
+
+.collapsible-panel.open .collapsible-arrow {
+  transform: rotate(90deg);
+}
+
+.collapsible-panel.open .collapsible-toggle {
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  border-bottom-color: transparent;
+}
+
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.collapsible-panel.open .collapsible-content {
+  max-height: 600px;
+}
+
+.collapsible-content .card {
+  border-top: none;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}

@@ -465,13 +465,23 @@ def _scheduled_post(jitter: int = 0, active_days: list = None):
 
         schedule_conf = config.get("schedule", {})
         api_keys = config.get("api_keys", {})
+        platforms = []
         if schedule_conf.get("post_to_x", True):
             logic.post_to_x(text=text, api_keys=api_keys)
             _add_log("success", "X投稿成功")
+            platforms.append("x")
 
         if schedule_conf.get("post_to_threads", False):
             logic.post_to_threads(text=text, api_key=api_keys.get("threads_api_key", ""))
             _add_log("success", "Threads投稿成功")
+            platforms.append("threads")
+
+        # 投稿成功時に履歴に記録（ダッシュボードに反映）
+        if platforms:
+            engagement.record_post(
+                post_text=text,
+                platform=",".join(platforms),
+            )
 
     except Exception as e:
         _add_log("error", f"投稿失敗: {e}")

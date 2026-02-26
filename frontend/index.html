@@ -29,11 +29,11 @@
       </li>
       <li class="nav-item" data-page="generator">
         <span class="nav-icon">✍️</span>
-        <span class="nav-label">投稿生成</span>
+        <span class="nav-label">手動投稿</span>
       </li>
       <li class="nav-item" data-page="scheduler">
         <span class="nav-icon">📅</span>
-        <span class="nav-label">スケジューラー</span>
+        <span class="nav-label">自動投稿</span>
       </li>
       <li class="nav-item" data-page="analytics">
         <span class="nav-icon">📈</span>
@@ -134,6 +134,32 @@
       <div class="page-header">
         <h1>トレンド分析</h1>
         <button class="btn btn-primary" onclick="App.trends.refresh()">🔄 更新</button>
+      </div>
+
+      <div class="collapsible-panel">
+        <button class="collapsible-toggle" onclick="this.parentElement.classList.toggle('open')">
+          📡 ソース設定
+          <span class="collapsible-arrow">▶</span>
+        </button>
+        <div class="collapsible-content">
+          <div class="card">
+            <div class="card-body">
+              <div class="form-group">
+                <label>RSS URL（1行に1つ）</label>
+                <textarea id="set-rss-urls" class="form-textarea" rows="4"
+                  placeholder="https://example.com/rss&#10;https://example.com/feed"></textarea>
+              </div>
+              <button class="btn btn-outline" onclick="App.settings.suggestKeywords()">🔑 ペルソナからキーワード提案</button>
+              <div id="keyword-suggest-list" style="display:none; margin-top: 12px;"></div>
+              <div class="form-group" style="margin-top: 16px;">
+                <label>ブラックリスト（除外ワード、カンマ区切り）</label>
+                <input type="text" id="set-blacklist" class="form-input" placeholder="ワード1, ワード2, ワード3">
+              </div>
+              <button class="btn btn-sm btn-primary" onclick="App.settings.save()" style="margin-top: 8px;">💾
+                保存</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="card">
@@ -501,7 +527,7 @@
         <button class="settings-tab active" data-settings-tab="api">🔑 API設定</button>
         <button class="settings-tab" data-settings-tab="persona">👤 ペルソナ</button>
         <button class="settings-tab" data-settings-tab="prompt">📝 プロンプト</button>
-        <button class="settings-tab" data-settings-tab="sources">📡 情報源</button>
+
         <button class="settings-tab" data-settings-tab="note">📔 note連携</button>
       </div>
 
@@ -632,24 +658,7 @@
         </div>
       </div>
 
-      <!-- 情報源 -->
-      <div class="settings-panel" id="settings-sources">
-        <div class="card">
-          <div class="card-body">
-            <div class="form-group">
-              <label>RSS URL（1行に1つ）</label>
-              <textarea id="set-rss-urls" class="form-textarea" rows="6"
-                placeholder="https://example.com/rss&#10;https://example.com/feed"></textarea>
-            </div>
-            <button class="btn btn-outline" onclick="App.settings.suggestKeywords()">🔑 ペルソナからキーワード提案</button>
-            <div id="keyword-suggest-list" style="display:none; margin-top: 12px;"></div>
-            <div class="form-group" style="margin-top: 16px;">
-              <label>ブラックリスト（除外ワード、カンマ区切り）</label>
-              <input type="text" id="set-blacklist" class="form-input" placeholder="ワード1, ワード2, ワード3">
-            </div>
-          </div>
-        </div>
-      </div>
+
 
       <!-- note連携 -->
       <div class="settings-panel" id="settings-note">
