@@ -1,36 +1,41 @@
 /* ==========================================================================
-   Auto-Post v2 — BuzzAI 風 ダークテーマ
+   Auto-Post v2 — Premium Dark Theme (Teal + Glassmorphism)
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap');
 
 :root {
-  /* --- Colors --- */
-  --bg-body: #0a0a1a;
-  --bg-sidebar: #0d0d24;
-  --bg-card: #12122a;
-  --bg-card-hover: #181840;
-  --bg-input: #1a1a3a;
-  --bg-input-focus: #1e1e44;
+  /* --- Colors (Teal/Emerald — BuzzAI差別化) --- */
+  --bg-body: #070b14;
+  --bg-sidebar: #0a0f1a;
+  --bg-card: rgba(15, 23, 42, 0.6);
+  --bg-card-hover: rgba(20, 30, 55, 0.8);
+  --bg-input: rgba(15, 23, 42, 0.8);
+  --bg-input-focus: rgba(20, 30, 55, 0.9);
 
-  --border-color: rgba(255, 255, 255, 0.06);
-  --border-glow: rgba(130, 100, 255, 0.2);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(20, 184, 166, 0.25);
 
-  --text-primary: #e8e8f0;
-  --text-secondary: #8888aa;
-  --text-muted: #5555770;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
 
-  --accent-purple: #7c5cfc;
-  --accent-purple-glow: rgba(124, 92, 252, 0.3);
-  --accent-blue: #4ea8de;
-  --accent-orange: #ff8c42;
-  --accent-red: #ff4757;
-  --accent-green: #2ed573;
-  --accent-pink: #ff6b9d;
+  --accent-purple: #14b8a6;
+  --accent-purple-glow: rgba(20, 184, 166, 0.25);
+  --accent-blue: #38bdf8;
+  --accent-orange: #f59e0b;
+  --accent-red: #ef4444;
+  --accent-green: #22c55e;
+  --accent-pink: #f472b6;
 
-  --gradient-primary: linear-gradient(135deg, #7c5cfc 0%, #4ea8de 100%);
-  --gradient-warm: linear-gradient(135deg, #ff8c42 0%, #ff6b9d 100%);
-  --gradient-card: linear-gradient(135deg, rgba(124, 92, 252, 0.08) 0%, rgba(78, 168, 222, 0.04) 100%);
+  --gradient-primary: linear-gradient(135deg, #14b8a6 0%, #38bdf8 100%);
+  --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #f472b6 100%);
+  --gradient-card: linear-gradient(135deg, rgba(20, 184, 166, 0.06) 0%, rgba(56, 189, 248, 0.03) 100%);
+
+  /* --- Glassmorphism --- */
+  --glass-bg: rgba(15, 23, 42, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-blur: blur(16px);
 
   /* --- Spacing --- */
   --sidebar-width: 220px;
@@ -89,8 +94,10 @@ h4 {
 
 .sidebar {
   width: var(--sidebar-width);
-  background: var(--bg-sidebar);
-  border-right: 1px solid var(--border-color);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-right: 1px solid var(--glass-border);
   display: flex;
   flex-direction: column;
   padding: 20px 0;
@@ -503,7 +510,7 @@ h4 {
 }
 
 .bar-fill.blue {
-  background: linear-gradient(90deg, #4ea8de, #7c5cfc);
+  background: linear-gradient(90deg, #38bdf8, #14b8a6);
 }
 
 .bar-value {
@@ -1086,7 +1093,7 @@ h4 {
 .eng-bar-imp {
   flex: 1;
   max-width: 20px;
-  background: linear-gradient(180deg, #4ea8de, rgba(78, 168, 222, 0.3));
+  background: linear-gradient(180deg, #38bdf8, rgba(56, 189, 248, 0.3));
   border-radius: 4px 4px 0 0;
   transition: height 0.6s ease, opacity 0.2s;
   min-height: 2px;
@@ -1102,8 +1109,8 @@ h4 {
 }
 
 .eng-bar-group:hover .eng-bar-imp {
-  background: linear-gradient(180deg, #4ea8de, rgba(78, 168, 222, 0.6));
-  box-shadow: 0 0 12px rgba(78, 168, 222, 0.4);
+  background: linear-gradient(180deg, #38bdf8, rgba(56, 189, 248, 0.6));
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
 }
 
 .eng-bar-group:hover .eng-bar-likes {
@@ -1144,7 +1151,7 @@ h4 {
 }
 
 .eng-legend-dot.imp {
-  background: #4ea8de;
+  background: #38bdf8;
 }
 
 .eng-legend-dot.likes {
