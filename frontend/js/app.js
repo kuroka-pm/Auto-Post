@@ -466,8 +466,9 @@ App.generator.generate = async function () {
           <div class="post-meta">
             <span class="post-char-count ${overClass}">${p.char_count}文字</span>
             <div class="post-platform-select">
-              <label class="checkbox-label checkbox-inline"><input type="checkbox" id="post-x-${i}" checked> 𝕏</label>
-              <label class="checkbox-label checkbox-inline"><input type="checkbox" id="post-threads-${i}"> 🔗</label>
+              <span class="platform-label">投稿先</span>
+              <label class="checkbox-label checkbox-inline"><input type="checkbox" id="post-x-${i}" checked> 𝕏 X</label>
+              <label class="checkbox-label checkbox-inline"><input type="checkbox" id="post-threads-${i}"> <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/Threads_%28app%29.svg" alt="Threads" style="width:14px;height:14px;filter:invert(1);vertical-align:middle"> Threads</label>
             </div>
             <div class="post-actions">
               <button class="btn btn-sm btn-outline" onclick="App.generator.copy(${i})">📋 コピー</button>

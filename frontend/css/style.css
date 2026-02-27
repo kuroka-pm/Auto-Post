@@ -19,21 +19,21 @@
   --text-secondary: #8892a8;
   --text-muted: #4a5568;
 
-  --accent-purple: #f59e0b;
-  --accent-purple-glow: rgba(245, 158, 11, 0.25);
-  --accent-blue: #fbbf24;
+  --accent-purple: #22d3ee;
+  --accent-purple-glow: rgba(34, 211, 238, 0.25);
+  --accent-blue: #38bdf8;
   --accent-orange: #f97316;
   --accent-red: #ef4444;
   --accent-green: #00ff88;
-  --accent-pink: #fb923c;
+  --accent-pink: #67e8f9;
   --accent-cyan: #22d3ee;
   --accent-line: #22d3ee;
   --accent-line-glow: rgba(34, 211, 238, 0.25);
 
-  --gradient-primary: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+  --gradient-primary: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
   --gradient-warm: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
-  --gradient-card: linear-gradient(135deg, rgba(34, 211, 238, 0.02) 0%, rgba(245, 158, 11, 0.01) 100%);
-  --gradient-cyber: linear-gradient(135deg, rgba(34, 211, 238, 0.06) 0%, rgba(245, 158, 11, 0.03) 100%);
+  --gradient-card: linear-gradient(135deg, rgba(34, 211, 238, 0.02) 0%, rgba(6, 182, 212, 0.01) 100%);
+  --gradient-cyber: linear-gradient(135deg, rgba(34, 211, 238, 0.06) 0%, rgba(56, 189, 248, 0.03) 100%);
 
   /* --- Card Style --- */
   --glass-bg: rgba(12, 18, 35, 0.92);
@@ -163,10 +163,10 @@ h4 {
   font-size: 0.6rem;
   font-weight: 600;
   background: var(--accent-purple);
-  color: #111;
+  color: #0a0e1a;
   padding: 2px 6px;
   border-radius: 4px;
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.3);
 }
 
 .topbar-nav {
@@ -547,10 +547,10 @@ h4 {
 
 .tag:hover {
   background: var(--accent-purple);
-  color: white;
+  color: #0a0e1a;
   border-color: var(--accent-purple);
   transform: scale(1.05);
-  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 16px rgba(34, 211, 238, 0.3);
 }
 
 .tag.hot {
@@ -567,8 +567,8 @@ h4 {
 }
 
 .time-slot {
-  background: rgba(245, 158, 11, 0.08);
-  border: 1px solid rgba(245, 158, 11, 0.15);
+  background: rgba(34, 211, 238, 0.08);
+  border: 1px solid rgba(34, 211, 238, 0.15);
   border-radius: var(--radius-sm);
   padding: 12px;
   text-align: center;
@@ -691,6 +691,12 @@ h4 {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.platform-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
 .checkbox-inline {
@@ -1099,7 +1105,7 @@ h4 {
 
 .btn-primary {
   background: var(--accent-purple);
-  color: #111;
+  color: #0a0e1a;
   font-weight: 600;
 }
 
@@ -2002,7 +2008,7 @@ body.light-mode .kpi-card:hover {
 }
 
 body.light-mode .kpi-value {
-  color: #d97706;
+  color: #0891b2;
 }
 
 body.light-mode .brand-text {
@@ -2010,11 +2016,11 @@ body.light-mode .brand-text {
 }
 
 body.light-mode .main-content::-webkit-scrollbar-thumb {
-  background: rgba(245, 158, 11, 0.25);
+  background: rgba(34, 211, 238, 0.25);
 }
 
 body.light-mode .main-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(245, 158, 11, 0.45);
+  background: rgba(34, 211, 238, 0.45);
 }
 
 /* --- レスポンシブ --- */
