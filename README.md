@@ -5,7 +5,7 @@ AI を活用した X (Twitter) & Threads 自動投稿ツール。トレンド分
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
 ![Flask](https://img.shields.io/badge/Flask-3.x-lightgrey?logo=flask)
 ![Responsive](https://img.shields.io/badge/Layout-Adaptive-orange)
-![License](https://img.shields.io/badge/License-MIT-green)
+![License](https://img.shields.io/badge/License-Custom-red)
 
 ## 📸 スクリーンショット
 
@@ -121,7 +121,7 @@ Auto-Post/
 
 ## 📝 ライセンス
 
-[MIT License](LICENSE) — 詳細は LICENSE ファイルをご確認ください。
+カスタムライセンス — ソースコードは閲覧可能ですが、利用には正規購入が必要です。詳細は [LICENSE](LICENSE) をご確認ください。
 
 ## 👨‍💻 開発者
 

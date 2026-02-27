@@ -1,21 +1,33 @@
-MIT License
+AutoPost v2 — カスタムライセンス
 
 Copyright (c) 2026 kuroka
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. ソースコードの閲覧
+   本リポジトリのソースコードは、透明性の確保を目的として公開しています。
+   誰でも閲覧・安全性の確認を行うことができます。
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+2. 利用条件
+   本ソフトウェアの利用（実行・インストール）は、
+   正規に購入した本人に限り許可されます。
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+3. 禁止事項
+   以下の行為を禁止します。
+   - 第三者への再配布・転売・共有
+   - 本ソフトウェアの全部または一部を利用した派生物の配布・販売
+   - 購入者以外による商用・業務利用
+
+4. 改変
+   購入者本人が私的に改変して利用することは許可します。
+   ただし、改変物の配布・共有は禁止です。
+
+5. 商用・法人利用
+   法人・商用利用をご希望の場合は、開発者にお問い合わせください。
+   X: @kuroka_pm
+
+6. 免責事項
+   本ソフトウェアは現状有姿（AS IS）で提供されます。
+   開発者は、本ソフトウェアの使用により生じたいかなる損害についても
+   一切の責任を負いません。
+
+7. 準拠法
+   本ライセンスは日本法に準拠します。
