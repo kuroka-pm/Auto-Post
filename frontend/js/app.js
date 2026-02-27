@@ -1136,7 +1136,7 @@ App.settings.saveSources = async function () {
 
 // --- 設定エクスポート / インポート / 初期化 ---
 
-App.settings.exportConfig = function () {
+App.settings.exportConfig = async function () {
     // API キーをマスクしてエクスポート
     var exportData = JSON.parse(JSON.stringify(App.config));
     if (exportData.api_keys) {
@@ -1147,11 +1147,33 @@ App.settings.exportConfig = function () {
             }
         });
     }
+    var filename = "autopost_config_" + new Date().toISOString().slice(0, 10) + ".json";
+
+    // バックエンドの保存ダイアログを試行
+    try {
+        var resp = await fetch("/api/config/export", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ config: exportData, filename: filename }),
+        });
+        var result = await resp.json();
+        if (result.status === "ok") {
+            App.toast("📤 エクスポート完了: " + result.path);
+            return;
+        } else if (result.status === "cancelled") {
+            App.toast("⚠️ エクスポートがキャンセルされました", "warn");
+            return;
+        }
+    } catch (e) {
+        // バックエンド未対応 → ブラウザダウンロードにフォールバック
+    }
+
+    // フォールバック: ブラウザのダウンロード
     var json = JSON.stringify(exportData, null, 2);
     var blob = new Blob([json], { type: "application/json" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "autopost_config_" + new Date().toISOString().slice(0, 10) + ".json";
+    a.download = filename;
     a.click();
     URL.revokeObjectURL(a.href);
     App.toast("📤 設定をエクスポートしました（APIキーはマスク済み）");

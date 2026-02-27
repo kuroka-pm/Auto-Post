@@ -171,6 +171,50 @@ def _mask_api_keys(config: dict) -> dict:
     return masked
 
 
+@app.route("/api/config/export", methods=["POST"])
+def export_config_with_dialog():
+    """設定をファイルダイアログで保存先を選んでエクスポートする。"""
+    import json
+    data = request.get_json()
+    if not data or "config" not in data:
+        return jsonify({"error": "No config data provided"}), 400
+
+    export_data = data["config"]
+    default_name = data.get("filename", "autopost_config.json")
+
+    def _open_save_dialog():
+        """tkinter のファイル保存ダイアログを別スレッドで開く。"""
+        import tkinter as tk
+        from tkinter import filedialog
+        root = tk.Tk()
+        root.withdraw()
+        root.attributes("-topmost", True)
+        filepath = filedialog.asksaveasfilename(
+            title="設定のエクスポート先を選択",
+            initialfile=default_name,
+            defaultextension=".json",
+            filetypes=[("JSON ファイル", "*.json"), ("すべてのファイル", "*.*")],
+        )
+        root.destroy()
+        return filepath
+
+    # tkinter は別スレッドで実行
+    import concurrent.futures
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        future = executor.submit(_open_save_dialog)
+        filepath = future.result(timeout=120)
+
+    if not filepath:
+        return jsonify({"status": "cancelled"})
+
+    try:
+        json_str = json.dumps(export_data, ensure_ascii=False, indent=2)
+        Path(filepath).write_text(json_str, encoding="utf-8")
+        return jsonify({"status": "ok", "path": filepath})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 # ---------------------------------------------------------------------------
 # トレンド API
 # ---------------------------------------------------------------------------
