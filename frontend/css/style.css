@@ -280,6 +280,41 @@ h4 {
   height: 100vh;
 }
 
+/* --- Custom Scrollbar --- */
+.main-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.main-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+  background: rgba(20, 184, 166, 0.3);
+  border-radius: 3px;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(20, 184, 166, 0.5);
+}
+
+/* --- Page Section Entrance Animation --- */
+.page:not(.hidden) {
+  animation: fadeInUp 0.35s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .page-header {
   display: flex;
   align-items: center;
@@ -327,17 +362,20 @@ h4 {
    ========================================================================== */
 
 .card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius);
   margin-bottom: 20px;
   overflow: hidden;
-  transition: var(--transition);
+  transition: all 0.3s ease;
 }
 
 .card:hover {
   border-color: var(--border-glow);
-  box-shadow: 0 4px 24px rgba(20, 184, 166, 0.06);
+  box-shadow: 0 8px 32px rgba(20, 184, 166, 0.08);
+  transform: translateY(-1px);
 }
 
 .card-header {
@@ -373,17 +411,19 @@ h4 {
 
 .kpi-card {
   background: var(--gradient-card);
-  border: 1px solid var(--border-color);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius);
   padding: 20px;
   text-align: center;
-  transition: var(--transition);
+  transition: all 0.3s ease;
 }
 
 .kpi-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
   border-color: var(--border-glow);
-  box-shadow: 0 8px 32px rgba(20, 184, 166, 0.1);
+  box-shadow: 0 12px 40px rgba(20, 184, 166, 0.12);
 }
 
 .kpi-icon {
@@ -468,13 +508,15 @@ h4 {
   font-weight: 500;
   border: 1px solid var(--border-color);
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.25s ease;
 }
 
 .tag:hover {
   background: var(--accent-purple);
   color: white;
   border-color: var(--accent-purple);
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(20, 184, 166, 0.3);
 }
 
 .tag.hot {
@@ -997,17 +1039,18 @@ h4 {
 }
 
 .btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px var(--accent-purple-glow);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--accent-purple-glow);
 }
 
 .btn-primary:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.97);
+  transition-duration: 0.1s;
 }
 
 .btn-success {
   background: var(--accent-green);
-  color: #0a0a1a;
+  color: var(--bg-body);
 }
 
 .btn-danger {
