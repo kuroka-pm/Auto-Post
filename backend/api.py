@@ -29,6 +29,36 @@ app = Flask(
 )
 
 # ---------------------------------------------------------------------------
+# ブラウザ自動終了用ハートビート
+# ---------------------------------------------------------------------------
+_last_heartbeat: float = 0.0
+_heartbeat_started = False
+_HEARTBEAT_TIMEOUT = 15  # 秒
+
+
+@app.route("/api/heartbeat", methods=["POST"])
+def heartbeat():
+    """フロントエンドからの生存確認。"""
+    global _last_heartbeat, _heartbeat_started
+    _last_heartbeat = time.time()
+    if not _heartbeat_started:
+        _heartbeat_started = True
+        t = threading.Thread(target=_heartbeat_watchdog, daemon=True)
+        t.start()
+    return jsonify({"status": "ok"})
+
+
+def _heartbeat_watchdog():
+    """ハートビートが途絶えたらプロセスを終了する。"""
+    import os
+    while True:
+        time.sleep(5)
+        if _last_heartbeat > 0 and (time.time() - _last_heartbeat) > _HEARTBEAT_TIMEOUT:
+            print("🛑 ブラウザが閉じられました。サーバーを終了します。")
+            os._exit(0)
+
+
+# ---------------------------------------------------------------------------
 # グローバル状態
 # ---------------------------------------------------------------------------
 _scheduler_running = False

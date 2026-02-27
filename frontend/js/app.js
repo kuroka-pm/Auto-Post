@@ -51,6 +51,11 @@ App.init = async function () {
     setInterval(() => App.updateStatus(), 15000);
     setInterval(() => App.scheduler.refreshLogs(), 10000);
 
+    // ハートビート — ブラウザが開いている間サーバーを維持
+    setInterval(() => {
+        fetch("/api/heartbeat", { method: "POST" }).catch(() => { });
+    }, 5000);
+
     // キーボードショートカット
     document.addEventListener("keydown", function (e) {
         // Ctrl+G = 生成
