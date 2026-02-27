@@ -13,8 +13,8 @@
             --bg-card: #1a1f2e;
             --text-primary: #e8eaf0;
             --text-secondary: #9ca3af;
-            --accent-purple: #7c5cfc;
-            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-purple: #22d3ee;
+            --border-color: rgba(34, 211, 238, 0.08);
         }
 
         * {
@@ -41,7 +41,7 @@
 
         .guide-header h1 {
             font-size: 1.6rem;
-            background: linear-gradient(135deg, #7c5cfc, #a78bfa);
+            background: linear-gradient(135deg, #22d3ee, #06b6d4);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -144,7 +144,7 @@
         h3 {
             font-size: 1.05rem;
             margin: 24px 0 10px;
-            color: #a78bfa;
+            color: #67e8f9;
         }
 
         p {
@@ -202,7 +202,7 @@
         }
 
         .info-box {
-            background: rgba(124, 92, 252, 0.08);
+            background: rgba(34, 211, 238, 0.08);
             border-left: 4px solid var(--accent-purple);
             border-radius: 0 10px 10px 0;
             padding: 16px 20px;
@@ -210,7 +210,7 @@
         }
 
         .info-box h4 {
-            color: #a78bfa;
+            color: #67e8f9;
             margin-bottom: 6px;
         }
 
@@ -285,12 +285,12 @@
         <div class="step-card">
             <h4>Step 1: API キーの設定</h4>
             <p>
-                サイドバーの「⚙️ 設定」→「🔑 API設定」タブで各サービスの API キーを入力してください。
+                上部ナビバーの「⚙️ 設定」→「🔑 API設定」タブで各サービスの API キーを入力してください。
             </p>
             <ul>
                 <li><strong>Gemini API Key</strong> — <a href="https://aistudio.google.com/apikey"
-                        style="color:#a78bfa">Google AI Studio</a> で取得</li>
-                <li><strong>X (Twitter) API</strong> — <a href="https://developer.x.com/" style="color:#a78bfa">X
+                        style="color:#67e8f9">Google AI Studio</a> で取得</li>
+                <li><strong>X (Twitter) API</strong> — <a href="https://developer.x.com/" style="color:#67e8f9">X
                         Developer Portal</a> で取得（API Key, Secret, Access Token, Access Token Secret の4つ）</li>
                 <li><strong>Threads API</strong> — Meta Developer Portal で取得したアクセストークン</li>
             </ul>
@@ -346,7 +346,7 @@
         <h3>手動投稿（AI 投稿ジェネレーター）</h3>
         <p>
             トレンドとスタイルを選択し、AI が投稿文を自動生成します。
-            生成された投稿は編集後、X / Threads にワンクリックで投稿できます。
+            生成された投稿は編集後、各投稿ごとに投稿先（X / Threads）を個別選択してワンクリックで投稿できます。
             画像を添付し、ALT テキストを設定することも可能です。
         </p>
         <p>利用可能なライティングスタイル（8種）:</p>
@@ -387,7 +387,7 @@
         </p>
         <ul>
             <li><strong>≤1024px</strong>（タブレット）— KPIと時間グリッドが2列に</li>
-            <li><strong>≤768px</strong>（スマホ横）— サイドバーがアイコンのみに折りたたみ</li>
+            <li><strong>≤768px</strong>（スマホ横）— ナビバーがコンパクトに折りたたみ</li>
             <li><strong>≤480px</strong>（スマホ縦）— 全グリッドが1列表示</li>
         </ul>
 
@@ -404,7 +404,7 @@
         <div class="info-box">
             <h4>🌗 ダーク / ライトモード</h4>
             <p>
-                サイドバー下部のテーマボタンでダークモードとライトモードを切り替えできます。
+                ナビバー右端のテーマボタンでダークモードとライトモードを切り替えできます。
                 選択したテーマはブラウザに保存され、次回起動時に復元されます。
             </p>
         </div>
@@ -422,7 +422,7 @@
             <p>
                 Threads のアクセストークンは 60 日で期限切れになります。
                 API設定タブの「🔄 トークン更新」ボタンで長期トークンに更新してください。
-                有効期限はサイドバーのステータスドットでも確認できます。
+                有効期限はナビバーのステータスドットでも確認できます。
             </p>
         </div>
 

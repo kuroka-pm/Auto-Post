@@ -8,6 +8,13 @@ import sys
 import threading
 from pathlib import Path
 
+# Windows コンソールの文字化け対策（cp932 → utf-8）
+if sys.platform == "win32":
+    for _stream_name in ("stdout", "stderr"):
+        _stream = getattr(sys, _stream_name, None)
+        if _stream and hasattr(_stream, "reconfigure"):
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+
 # PyInstaller --onefile 対応
 if getattr(sys, "frozen", False):
     _BASE = Path(getattr(sys, "_MEIPASS", Path(sys.executable).resolve().parent))
