@@ -684,6 +684,36 @@ h4 {
   gap: 12px;
   padding-top: 12px;
   border-top: 1px solid var(--border-color);
+  flex-wrap: wrap;
+}
+
+.post-platform-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkbox-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  transition: var(--transition);
+}
+
+.checkbox-inline:hover {
+  border-color: var(--accent-line);
+  color: var(--text-primary);
+}
+
+.checkbox-inline input[type="checkbox"] {
+  margin: 0;
+  accent-color: var(--accent-line);
 }
 
 .post-char-count {

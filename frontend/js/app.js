@@ -465,6 +465,10 @@ App.generator.generate = async function () {
           </div>
           <div class="post-meta">
             <span class="post-char-count ${overClass}">${p.char_count}文字</span>
+            <div class="post-platform-select">
+              <label class="checkbox-label checkbox-inline"><input type="checkbox" id="post-x-${i}" checked> 𝕏</label>
+              <label class="checkbox-label checkbox-inline"><input type="checkbox" id="post-threads-${i}"> 🔗</label>
+            </div>
             <div class="post-actions">
               <button class="btn btn-sm btn-outline" onclick="App.generator.copy(${i})">📋 コピー</button>
               <button class="btn btn-sm btn-primary" onclick="App.generator.post(${i})">🐦 投稿</button>
@@ -520,8 +524,8 @@ App.generator.post = async function (index) {
     if (!el) return;
 
     const text = el.textContent;
-    const postX = document.getElementById("gen-post-x").checked;
-    const postThreads = document.getElementById("gen-post-threads").checked;
+    const postX = document.getElementById("post-x-" + index).checked;
+    const postThreads = document.getElementById("post-threads-" + index).checked;
 
     if (!postX && !postThreads) {
         App.toast("⚠️ 投稿先を選択してください");
