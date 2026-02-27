@@ -4,7 +4,7 @@ AI を活用した X (Twitter) & Threads 自動投稿ツール。トレンド分
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
 ![Flask](https://img.shields.io/badge/Flask-3.x-lightgrey?logo=flask)
-![Responsive](https://img.shields.io/badge/Responsive-Mobile%20Ready-orange)
+![Responsive](https://img.shields.io/badge/Layout-Adaptive-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## 📸 スクリーンショット
@@ -24,7 +24,7 @@ AI を活用した X (Twitter) & Threads 自動投稿ツール。トレンド分
 | 🕐 最適投稿時間 | エンゲージメントデータからピーク時間帯を自動分析・表示 |
 | 📔 note 連携 | note.com の記事を取得して告知投稿に活用 |
 | 👤 ペルソナ | AI による詳細ペルソナ自動生成 |
-| 📱 レスポンシブ | タブレット・スマホ対応（3段階ブレークポイント）|
+| 📐 アダプティブ | ウィンドウサイズに応じた自動レイアウト調整 |
 | 🌗 ダーク/ライト | テーマ切り替え対応 |
 | 📝 ファイルログ | 実行ログを日付別ファイルに自動保存 |
 | 🔒 エラーサニタイズ | ログから API キーを自動マスク |
