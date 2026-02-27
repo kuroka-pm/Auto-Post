@@ -1852,29 +1852,111 @@ h4 {
   text-align: center;
 }
 
-/* --- ライトモード --- */
+/* ==========================================================================
+   Phase 4 — Focus Ring & Font Tuning
+   ========================================================================== */
+
+/* --- Custom Focus Ring (Accessibility + Brand) --- */
+*:focus-visible {
+  outline: 2px solid var(--accent-purple);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent-purple);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--accent-purple-glow);
+}
+
+/* --- Font Weight Hierarchy --- */
+h1 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+h3,
+h4 {
+  font-weight: 600;
+}
+
+.kpi-value {
+  letter-spacing: -0.03em;
+}
+
+/* --- Gradient Top Bar (Brand Identity) --- */
+.main-content::before {
+  content: '';
+  display: block;
+  height: 2px;
+  background: var(--gradient-primary);
+  margin: -28px -32px 24px;
+  border-radius: 0 0 2px 2px;
+}
+
+/* ==========================================================================
+   Light Mode (Complete)
+   ========================================================================== */
+
 body.light-mode {
-  --bg-body: #f0f2f5;
+  --bg-body: #f8fafc;
   --bg-sidebar: #ffffff;
-  --bg-card: #ffffff;
-  --bg-card-hover: #f5f5ff;
-  --bg-input: #f0f0f5;
-  --bg-input-focus: #e8e8f0;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-card-hover: rgba(248, 250, 252, 0.95);
+  --bg-input: #f1f5f9;
+  --bg-input-focus: #e2e8f0;
   --border-color: rgba(0, 0, 0, 0.08);
-  --border-glow: rgba(20, 184, 166, 0.15);
-  --text-primary: #1a1a2e;
-  --text-secondary: #555;
-  --text-muted: #888;
-  --glass-bg: rgba(255, 255, 255, 0.7);
+  --border-glow: rgba(20, 184, 166, 0.2);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --glass-bg: rgba(255, 255, 255, 0.75);
   --glass-border: rgba(0, 0, 0, 0.06);
+  --gradient-card: linear-gradient(135deg, rgba(20, 184, 166, 0.04) 0%, rgba(56, 189, 248, 0.02) 100%);
 }
 
 body.light-mode .sidebar {
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.06);
+}
+
+body.light-mode .sidebar::before {
+  background: linear-gradient(180deg, #14b8a6, #38bdf8 50%, rgba(56, 189, 248, 0.2));
 }
 
 body.light-mode .card {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+body.light-mode .card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+body.light-mode .kpi-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+body.light-mode .kpi-card:hover {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+}
+
+body.light-mode .brand-text {
+  -webkit-text-fill-color: transparent;
+}
+
+body.light-mode .main-content::-webkit-scrollbar-thumb {
+  background: rgba(20, 184, 166, 0.25);
+}
+
+body.light-mode .main-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(20, 184, 166, 0.45);
 }
 
 /* --- レスポンシブ --- */
