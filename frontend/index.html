@@ -10,15 +10,15 @@
 </head>
 
 <body>
-  <!-- サイドバー -->
-  <nav class="sidebar">
-    <div class="sidebar-brand">
+  <!-- トップバー -->
+  <header class="topbar">
+    <div class="topbar-brand">
       <span class="brand-icon">⚡</span>
       <span class="brand-text">AutoPost</span>
       <span class="brand-version">v2</span>
     </div>
 
-    <ul class="sidebar-nav">
+    <ul class="topbar-nav sidebar-nav">
       <li class="nav-item active" data-page="dashboard">
         <span class="nav-icon">📊</span>
         <span class="nav-label">ダッシュボード</span>
@@ -39,40 +39,31 @@
         <span class="nav-icon">📈</span>
         <span class="nav-label">アナリティクス</span>
       </li>
-    </ul>
-
-    <div class="sidebar-divider"></div>
-
-    <ul class="sidebar-nav sidebar-nav-bottom">
       <li class="nav-item" data-page="settings">
         <span class="nav-icon">⚙️</span>
         <span class="nav-label">設定</span>
       </li>
     </ul>
-    <a href="/guide.html" target="_blank" class="sidebar-link">
-      <span class="nav-icon">📖</span>
-      <span class="nav-label">使い方ガイド</span>
-    </a>
-    <button class="sidebar-link theme-toggle" onclick="App.toggleLightMode()">
-      <span class="nav-icon">🌓</span>
-      <span class="nav-label">テーマ切替</span>
-    </button>
 
-    <div class="sidebar-status">
-      <div class="status-item" id="status-x">
-        <span class="status-dot"></span>
-        <span>X API</span>
+    <div class="topbar-right">
+      <div class="topbar-status">
+        <div class="status-item" id="status-x">
+          <span class="status-dot"></span>
+          <span>X</span>
+        </div>
+        <div class="status-item" id="status-gemini">
+          <span class="status-dot"></span>
+          <span>Gemini</span>
+        </div>
+        <div class="status-item" id="status-threads">
+          <span class="status-dot"></span>
+          <span>Threads</span>
+        </div>
       </div>
-      <div class="status-item" id="status-gemini">
-        <span class="status-dot"></span>
-        <span>Gemini</span>
-      </div>
-      <div class="status-item" id="status-threads">
-        <span class="status-dot"></span>
-        <span>Threads</span>
-      </div>
+      <a href="/guide.html" target="_blank" class="topbar-link" title="使い方ガイド">📖</a>
+      <button class="topbar-link theme-toggle" onclick="App.toggleLightMode()" title="テーマ切替">🌓</button>
     </div>
-  </nav>
+  </header>
 
   <!-- メインコンテンツ -->
   <main class="main-content">
