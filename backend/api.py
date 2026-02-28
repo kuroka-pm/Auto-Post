@@ -33,7 +33,7 @@ app = Flask(
 # ---------------------------------------------------------------------------
 _last_heartbeat: float = 0.0
 _heartbeat_started = False
-_HEARTBEAT_TIMEOUT = 15  # 秒
+_HEARTBEAT_TIMEOUT = 120  # 秒（ブラウザ最小化時のスロットリング対策で長めに設定）
 
 
 @app.route("/api/heartbeat", methods=["POST"])
@@ -49,13 +49,28 @@ def heartbeat():
 
 
 def _heartbeat_watchdog():
-    """ハートビートが途絶えたらプロセスを終了する。"""
+    """ハートビートが途絶えたらプロセスを終了する。
+    ただしスケジューラ実行中は終了しない。"""
     import os
     while True:
-        time.sleep(5)
+        time.sleep(10)
         if _last_heartbeat > 0 and (time.time() - _last_heartbeat) > _HEARTBEAT_TIMEOUT:
+            # スケジューラが動いている間は終了しない
+            if _scheduler_running:
+                continue
             print("🛑 ブラウザが閉じられました。サーバーを終了します。")
             os._exit(0)
+
+
+@app.route("/api/heartbeat/close", methods=["POST"])
+def heartbeat_close():
+    """ブラウザが閉じられたときの即座通知 (sendBeacon)。"""
+    import os
+    if _scheduler_running:
+        print("⚠️ ブラウザが閉じられましたが、スケジューラが実行中のためサーバーを維持します。")
+        return jsonify({"status": "kept_alive"})
+    print("🛑 ブラウザが閉じられました。サーバーを終了します。")
+    os._exit(0)
 
 
 # ---------------------------------------------------------------------------

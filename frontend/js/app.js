@@ -56,6 +56,11 @@ App.init = async function () {
         fetch("/api/heartbeat", { method: "POST" }).catch(() => { });
     }, 5000);
 
+    // ブラウザが閉じられたときに即座にサーバーに通知
+    window.addEventListener("beforeunload", function () {
+        navigator.sendBeacon("/api/heartbeat/close");
+    });
+
     // キーボードショートカット
     document.addEventListener("keydown", function (e) {
         // Ctrl+G = 生成
