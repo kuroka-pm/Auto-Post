@@ -511,7 +511,11 @@
             <h4>Gemini API</h4>
             <div class="form-group">
               <label>APIキー</label>
-              <input type="password" id="set-gemini-key" class="form-input" placeholder="Gemini API Key">
+              <div class="key-input-wrap">
+                <input type="password" id="set-gemini-key" class="form-input" placeholder="Gemini API Key">
+                <button type="button" class="btn-key-toggle" onclick="App.settings.toggleKeyVisibility(this)"
+                  title="表示/非表示">👁</button>
+              </div>
             </div>
             <div class="form-group">
               <label>モデル</label>
@@ -526,26 +530,46 @@
             <h4>X (Twitter) API</h4>
             <div class="form-group">
               <label>API Key</label>
-              <input type="password" id="set-x-key" class="form-input" placeholder="API Key">
+              <div class="key-input-wrap">
+                <input type="password" id="set-x-key" class="form-input" placeholder="API Key">
+                <button type="button" class="btn-key-toggle" onclick="App.settings.toggleKeyVisibility(this)"
+                  title="表示/非表示">👁</button>
+              </div>
             </div>
             <div class="form-group">
               <label>API Secret</label>
-              <input type="password" id="set-x-secret" class="form-input" placeholder="API Secret">
+              <div class="key-input-wrap">
+                <input type="password" id="set-x-secret" class="form-input" placeholder="API Secret">
+                <button type="button" class="btn-key-toggle" onclick="App.settings.toggleKeyVisibility(this)"
+                  title="表示/非表示">👁</button>
+              </div>
             </div>
             <div class="form-group">
               <label>Access Token</label>
-              <input type="password" id="set-x-token" class="form-input" placeholder="Access Token">
+              <div class="key-input-wrap">
+                <input type="password" id="set-x-token" class="form-input" placeholder="Access Token">
+                <button type="button" class="btn-key-toggle" onclick="App.settings.toggleKeyVisibility(this)"
+                  title="表示/非表示">👁</button>
+              </div>
             </div>
             <div class="form-group">
               <label>Access Token Secret</label>
-              <input type="password" id="set-x-token-secret" class="form-input" placeholder="Access Token Secret">
+              <div class="key-input-wrap">
+                <input type="password" id="set-x-token-secret" class="form-input" placeholder="Access Token Secret">
+                <button type="button" class="btn-key-toggle" onclick="App.settings.toggleKeyVisibility(this)"
+                  title="表示/非表示">👁</button>
+              </div>
             </div>
 
             <div class="form-divider"></div>
             <h4>Threads API</h4>
             <div class="form-group">
               <label>アクセストークン</label>
-              <input type="password" id="set-threads-key" class="form-input" placeholder="Threads Access Token">
+              <div class="key-input-wrap">
+                <input type="password" id="set-threads-key" class="form-input" placeholder="Threads Access Token">
+                <button type="button" class="btn-key-toggle" onclick="App.settings.toggleKeyVisibility(this)"
+                  title="表示/非表示">👁</button>
+              </div>
             </div>
             <div id="threads-token-status-api" class="threads-token-status">
               ⏳ トークン状態を確認中...

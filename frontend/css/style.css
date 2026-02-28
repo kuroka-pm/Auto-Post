@@ -1046,6 +1046,33 @@ h4 {
   font-size: 0.85rem;
 }
 
+.key-input-wrap {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.key-input-wrap .form-input {
+  flex: 1;
+}
+
+.btn-key-toggle {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 8px 10px;
+  font-size: 1rem;
+  line-height: 1;
+  transition: var(--transition);
+}
+
+.btn-key-toggle:hover {
+  border-color: var(--accent-line);
+  color: var(--text-primary);
+}
+
 .form-textarea {
   resize: vertical;
   min-height: 60px;

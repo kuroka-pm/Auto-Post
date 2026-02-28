@@ -411,7 +411,7 @@ App.generator.updateStyleOptions = function () {
 App.generator.updateTrendOptions = function (trends) {
     const select = document.getElementById("gen-trend");
     const current = select.value;
-    select.innerHTML = '<option value="">自動選択</option>';
+    select.innerHTML = '<option value="">自動選択</option><option value="__none__">指定しない（トレンドなし）</option>';
     trends.forEach((t) => {
         const name = typeof t === "string" ? t : t.title || t;
         const opt = document.createElement("option");
@@ -442,7 +442,7 @@ App.generator.generate = async function () {
             body: JSON.stringify({
                 post_type: postType,
                 style: style || null,
-                trend: trend || null,
+                trend: trend === "__none__" ? "__none__" : (trend || null),
                 count: count,
                 smart_analysis: smart,
             }),
@@ -1144,6 +1144,19 @@ App.settings.saveSources = async function () {
     }
 };
 
+// --- APIキー表示切替 ---
+
+App.settings.toggleKeyVisibility = function (btn) {
+    var input = btn.parentElement.querySelector("input");
+    if (input.type === "password") {
+        input.type = "text";
+        btn.textContent = "🔒";
+    } else {
+        input.type = "password";
+        btn.textContent = "👁";
+    }
+};
+
 // --- 設定エクスポート / インポート / 初期化 ---
 
 App.settings.exportConfig = async function () {
@@ -1195,13 +1208,39 @@ App.settings.importConfig = async function (event) {
     try {
         var text = await file.text();
         var imported = JSON.parse(text);
+        // マスクされた API キー（***を含む）は除外して既存キーを保持
+        if (imported.api_keys) {
+            Object.keys(imported.api_keys).forEach(function (k) {
+                if (k !== "gemini_model" && typeof imported.api_keys[k] === "string" && imported.api_keys[k].includes("***")) {
+                    delete imported.api_keys[k];
+                }
+            });
+        }
+        // writing_styles をマージ: インポート側に無い既存スタイルを追加
+        if (imported.prompt_settings && imported.prompt_settings.writing_styles && App.config.prompt_settings && App.config.prompt_settings.writing_styles) {
+            var importedNames = new Set(imported.prompt_settings.writing_styles.map(function (s) { return s.name; }));
+            App.config.prompt_settings.writing_styles.forEach(function (s) {
+                if (!importedNames.has(s.name)) {
+                    imported.prompt_settings.writing_styles.push(s);
+                }
+            });
+        }
+        // type_b_styles も同様にマージ
+        if (imported.post_type && imported.post_type.type_b_styles && App.config.post_type && App.config.post_type.type_b_styles) {
+            var importedB = new Set(imported.post_type.type_b_styles);
+            App.config.post_type.type_b_styles.forEach(function (name) {
+                if (!importedB.has(name)) {
+                    imported.post_type.type_b_styles.push(name);
+                }
+            });
+        }
         await App.api("/api/config", {
             method: "POST",
             body: JSON.stringify(imported),
         });
         await App.loadConfig();
         App.settings.load();
-        App.toast("📥 設定をインポートしました");
+        App.toast("📥 設定をインポートしました（APIキーは既存を保持）");
     } catch (e) {
         App.toast("❌ インポート失敗: " + e.message);
     }

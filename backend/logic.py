@@ -730,6 +730,7 @@ GDC調査で「悪影響が過半数」というデータが出た。
 ```
 
 ## 今回の投稿スタイル: {style_name}
+- スタイル指示（最優先で従え）: {style_description}
 - 文字数目安: {char_range}
 - 構成: {structure}
 
@@ -796,6 +797,7 @@ Xのタイムラインはスマホで見る人が多く、カラム幅が狭い�
 - 改行なしの長い段落は絶対に禁止。Xでは「空白」が読みやすさの鍵
 
 ## 今回の投稿スタイル: {style_name}
+- スタイル指示（最優先で従え）: {style_description}
 - 文字数目安: {char_range}
 - 構成: {structure}
 
@@ -845,6 +847,7 @@ def generate_post(
     if not trends:
         prompt = _STEP2_TRENDLESS_TEMPLATE.format(
             style_name=style["name"],
+            style_description=style.get("description", ""),
             char_range=style["char_range"],
             structure=style["structure"],
             example=style["example"],
@@ -876,6 +879,7 @@ def generate_post(
 
         prompt = _STEP2_TEMPLATE.format(
             style_name=style["name"],
+            style_description=style.get("description", ""),
             char_range=style["char_range"],
             structure=style["structure"],
             example=style["example"],

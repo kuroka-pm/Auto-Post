@@ -321,7 +321,10 @@ def generate_post():
     gemini_model = api_keys.get("gemini_model", "gemini-2.5-flash")
 
     # トレンド取得
-    if post_type in ("A",) and not trend:
+    if trend == "__none__":
+        # ユーザーが「指定しない」を選択 → トレンドなしで生成
+        trends_list = []
+    elif post_type in ("A",) and not trend:
         try:
             trends_list = logic.fetch_trends(rss_urls=rss_urls, blacklist=blacklist)
         except Exception:
